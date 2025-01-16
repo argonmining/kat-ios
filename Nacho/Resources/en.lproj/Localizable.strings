@@ -1,0 +1,34 @@
+/* 
+  Localizable.strings
+  Nacho
+
+  Created by Aleksei Pichukov on 16.01.2025.
+  
+*/
+
+// Common
+"button_start" = "Let's GO";
+
+// Welcome
+"welcome_title" = "Welcome to NACHO the Kat";
+"welcome_subtitle" = "The first fair-launched memecoin on Kaspa";
+"welcome_description" = "Nacho the Kat has set specific, measurable objectives: developing open-source educational and insights tools as well as core infrastructure like KatScan, Kat Bot, Kat Gov, and Kat Pool. Join us and let's Rock together 🚀";
+
+// Tabs
+"tab_home" = "Home";
+"tab_scan" = "Kat Scan";
+"tab_pool" = "Kat Pool";
+"tab_bot" = "Kat Bot";
+
+// Home
+"home_navigation_title" = "Kat's Home";
+"home_fair_mint" = "FAIR MINT";
+"home_widget_deployed" = "Deployed";
+"home_widget_supply" = "Supply";
+"home_widget_total_mints" = "Total Mints";
+
+// Widgets
+"widget_price_title" = "Price";
+"widget_mc_title" = "Market Cap";
+"widget_volume_title" = "Volume";
+"widget_chart_title" = "Price Chart";
