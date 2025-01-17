@@ -4,6 +4,7 @@ import Observation
 @Observable
 final class KatScanViewModel {
 
+    var searchText: String = ""
     var tokens: [TokenDeployInfo]? = nil
 
     private let networkService: NetworkServiceProvidable
@@ -21,6 +22,14 @@ final class KatScanViewModel {
         } catch {
             // TODO: Add error handling
             print("Error: \(error)")
+        }
+    }
+
+    func filteredTokens() -> [TokenDeployInfo] {
+        guard let tokens else { return [] }
+        guard !searchText.isEmpty else { return tokens }
+        return tokens.filter {
+            $0.tick.lowercased().contains(searchText.lowercased())
         }
     }
 }

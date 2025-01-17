@@ -8,7 +8,7 @@ struct KatScanView: View {
         ScrollView {
             if viewModel.tokens != nil {
                 LazyVStack(spacing: Spacing.padding_2) {
-                    ForEach(viewModel.tokens!, id: \.self) { token in
+                    ForEach(viewModel.filteredTokens(), id: \.self) { token in
                         TokenListItemView(tokenInfo: token)
                     }
                 }
@@ -24,6 +24,7 @@ struct KatScanView: View {
             }
         }
         .navigationTitle(Localization.tabScan)
+        .searchable(text: $viewModel.searchText, prompt: "Search tokens")
         .background(Color.surfaceBackground.ignoresSafeArea())
         .task {
             await viewModel.fetchTokens()

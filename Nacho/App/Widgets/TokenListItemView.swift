@@ -1,3 +1,4 @@
+import CachedAsyncImage
 import SwiftUI
 
 struct TokenListItemView: View {
@@ -67,7 +68,10 @@ struct TokenListItemView: View {
     }
 
     private var asyncImage: some View {
-        AsyncImage(url: URL(string: tokenInfo.logoPath)) { phase in
+        CachedAsyncImage(
+            url: URL(string: tokenInfo.logoPath),
+            urlCache: .imageCache
+        ) { phase in
             switch phase {
             case .empty:
                 imagePlaceholder
