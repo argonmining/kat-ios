@@ -27,14 +27,20 @@ struct AppSkeletonView: View {
                     .tag(TabType.home)
                     .transition(.opacity)
 
-                    Text(Localization.tabScan)
-                        .tabItem {
-                            Label(
-                                Localization.tabScan,
-                                systemImage: "magnifyingglass"
+                    NavigationStack {
+                        KatScanView(
+                            viewModel: KatScanViewModel(
+                                networkService: viewModel.networkService
                             )
-                        }
-                        .tag(TabType.katScan)
+                        )
+                    }
+                    .tabItem {
+                        Label(
+                            Localization.tabScan,
+                            systemImage: "magnifyingglass"
+                        )
+                    }
+                    .tag(TabType.katScan)
 
                     Text(Localization.tabPool)
                         .tabItem {

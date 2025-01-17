@@ -16,10 +16,7 @@ struct PriceWidgetView: View {
                     Text("$\(stringPrice)").typography(.body1)
                         .lineLimit(1)
                         .shimmer(isActive: viewData == nil)
-                    Text(stringChange).typography(.caption2, color: .textOnSolid)
-                        .padding(.vertical, Spacing.padding_0_2_5)
-                        .padding(.horizontal, Spacing.padding_0_5)
-                        .background(RoundedRectangle(cornerRadius: Radius.radius_1).fill(changeColor))
+                    PillDS(text: stringChange, color: changeColor)
                         .shimmer(isActive: viewData == nil)
                 }
                 .padding(.bottom, Spacing.padding_1)

@@ -4,6 +4,12 @@ enum Localization {
 
     // Common
     static let buttonStart = "button_start".localized
+    static let fairMint = "fair_mint".localized
+    static let preMint = "pre_mint".localized
+    static let premintedText = "preminted_text".localized
+    static let mintedText = "minted_text".localized
+    static let tradeText = "trade_text".localized
+    static let holdersText = "holders_text".localized
 
     // Welcome
     static let welcomeTitle = "welcome_title".localized
@@ -18,7 +24,6 @@ enum Localization {
 
     // Home
     static let homeNavigationTitle = "home_navigation_title".localized
-    static let homeFairMint = "home_fair_mint".localized
     static let homeWidgetDeployed = "home_widget_deployed".localized
     static let homeWidgetSupply = "home_widget_supply".localized
     static let homeWidgetTotalMints = "home_widget_total_mints".localized

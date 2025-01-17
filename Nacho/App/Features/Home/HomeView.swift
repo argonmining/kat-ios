@@ -15,14 +15,7 @@ struct HomeView: View {
                     Text("NACHO")
                         .typography(.headline3, color: .textAccent)
                     Spacer()
-                    Text(Localization.homeFairMint)
-                        .typography(.body1, color: .textOnSolid)
-                        .padding(.vertical, Spacing.padding_0_2_5)
-                        .padding(.horizontal, Spacing.padding_1)
-                        .background(
-                            RoundedRectangle(cornerRadius: Radius.radius_1)
-                                .fill(Color.solidSuccess)
-                        )
+                    PillDS(text: Localization.fairMint, style: .large)
                 }
                 .padding(.bottom, Spacing.padding_1)
                 HStack(spacing: Spacing.padding_2) {

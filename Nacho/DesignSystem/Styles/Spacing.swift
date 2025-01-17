@@ -3,6 +3,7 @@ import CoreGraphics
 enum Spacing {
     static let padding_0_2_5: CGFloat = 2.0
     static let padding_0_5: CGFloat = 4.0
+    static let padding_0_7_5: CGFloat = 6.0
     static let padding_1: CGFloat = 8.0
     static let padding_1_2_5: CGFloat = 10.0
     static let padding_1_5: CGFloat = 12.0

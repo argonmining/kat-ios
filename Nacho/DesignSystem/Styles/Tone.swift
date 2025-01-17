@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ToneStyle: ViewModifier {
+struct Tone: ViewModifier {
 
     enum Style {
         case idle
@@ -27,7 +27,7 @@ struct ToneStyle: ViewModifier {
 
 extension View {
 
-    func toneStyle(_ style: ToneStyle.Style) -> some View {
-        return self.modifier(ToneStyle(style: style))
+    func toneStyle(_ style: Tone.Style) -> some View {
+        return self.modifier(Tone(style: style))
     }
 }

@@ -8,6 +8,12 @@
 
 // Common
 "button_start" = "Let's GO";
+"fair_mint" = "FAIR MINT";
+"pre_mint" = "PRE-MINT";
+"preminted_text" = "Pre-Minted";
+"minted_text" = "Minted";
+"trade_text" = "Trade on KSPR";
+"holders_text" = "Holders";
 
 // Welcome
 "welcome_title" = "Welcome to NACHO the Kat";
@@ -22,7 +28,6 @@
 
 // Home
 "home_navigation_title" = "Kat's Home";
-"home_fair_mint" = "FAIR MINT";
 "home_widget_deployed" = "Deployed";
 "home_widget_supply" = "Supply";
 "home_widget_total_mints" = "Total Mints";

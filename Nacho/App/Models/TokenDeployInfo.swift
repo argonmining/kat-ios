@@ -7,16 +7,16 @@ enum TokenState: Codable {
     case finished
 }
 
-struct TokenDeployInfo: Decodable {
+struct TokenDeployInfo: Decodable, Hashable {
 
     let tick: String
-    let maxSupply: UInt64
-    let limit: UInt64
-    let preMinted: UInt64
-    let minted: UInt64
-    let state: TokenState
-    let holdersTotal: UInt32
-    let mintTotal: UInt64
+    let maxSupply: Double
+    let limit: Double
+    let preMinted: Double
+    let minted: Double
+//    let state: TokenState
+    let holdersTotal: Double
+    let mintTotal: Double
     let logoPath: String
     let releaseTimeInterval: TimeInterval
 
@@ -36,13 +36,13 @@ struct TokenDeployInfo: Decodable {
 
     init(
         tick: String,
-        maxSupply: UInt64,
-        limit: UInt64,
-        preMinted: UInt64,
-        minted: UInt64,
-        state: TokenState,
-        holdersTotal: UInt32,
-        mintTotal: UInt64,
+        maxSupply: Double,
+        limit: Double,
+        preMinted: Double,
+        minted: Double,
+//        state: TokenState,
+        holdersTotal: Double,
+        mintTotal: Double,
         logoPath: String,
         releaseTimeInterval: TimeInterval
     ) {
@@ -51,7 +51,7 @@ struct TokenDeployInfo: Decodable {
         self.limit = limit
         self.preMinted = preMinted
         self.minted = minted
-        self.state = state
+//        self.state = state
         self.holdersTotal = holdersTotal
         self.mintTotal = mintTotal
         self.logoPath = logoPath
@@ -59,14 +59,15 @@ struct TokenDeployInfo: Decodable {
     }
 
     init(from decoder: Decoder) throws {
+
         let container = try decoder.container(keyedBy: CodingKeys.self)
         tick = try container.decode(String.self, forKey: .tick)
         let decimal = try container.decode(Int.self, forKey: .dec)
 
-        func parseValue(_ key: CodingKeys) throws -> UInt64 {
+        func parseValue(_ key: CodingKeys) throws -> Double {
             guard
                 let stringValue = try? container.decode(String.self, forKey: key),
-                let bigValue = UInt64(stringValue)
+                let doubleValue = Double(stringValue)
             else {
                 throw DecodingError.dataCorruptedError(
                     forKey: key,
@@ -74,7 +75,7 @@ struct TokenDeployInfo: Decodable {
                     debugDescription: "Invalid numeric value"
                 )
             }
-            return bigValue / UInt64(pow(10.0, Double(decimal)))
+            return doubleValue / pow(10.0, Double(decimal))
         }
 
         maxSupply = try parseValue(.max)
@@ -82,10 +83,18 @@ struct TokenDeployInfo: Decodable {
         preMinted = try parseValue(.pre)
         minted = try parseValue(.minted)
 
-        state = try container.decode(TokenState.self, forKey: .state)
-        holdersTotal = try container.decode(UInt32.self, forKey: .holderTotal)
-        mintTotal = try container.decode(UInt64.self, forKey: .mintTotal)
-        logoPath = try container.decode(String.self, forKey: .logo)
+//        state = try container.decode(TokenState.self, forKey: .state)
+
+        holdersTotal = try container.decode(Double.self, forKey: .holderTotal)
+        mintTotal = try container.decode(Double.self, forKey: .mintTotal)
+
+        let pathStringValue = (try? container.decode(String.self, forKey: .logo)) ?? ""
+        if pathStringValue.hasSuffix(".jpg") || pathStringValue.hasSuffix(".png") {
+            logoPath = Constants.baseUrl + String(pathStringValue.dropLast(4))
+        } else {
+            logoPath = pathStringValue
+        }
+
         guard
             let stringValue = try? container.decode(String.self, forKey: .mtsAdd),
             let timeInterval = TimeInterval(stringValue)
@@ -96,6 +105,6 @@ struct TokenDeployInfo: Decodable {
                 debugDescription: "Invalid numeric value"
             )
         }
-        releaseTimeInterval = timeInterval
+        releaseTimeInterval = timeInterval / 1000
     }
 }

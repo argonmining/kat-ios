@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TypographyStyle: ViewModifier {
+struct Typography: ViewModifier {
 
     enum Style {
         case headline1
@@ -54,9 +54,9 @@ struct TypographyStyle: ViewModifier {
         } else {
             switch style {
             case .caption, .caption2:
-                return .secondary
+                return .textSecondary
             default:
-                return .primary
+                return .textPrimary
             }
         }
     }
@@ -69,7 +69,7 @@ struct TypographyStyle: ViewModifier {
 }
 
 extension View {
-    func typography(_ style: TypographyStyle.Style, color: Color? = nil) -> some View {
-        self.modifier(TypographyStyle(style: style, color: color))
+    func typography(_ style: Typography.Style, color: Color? = nil) -> some View {
+        self.modifier(Typography(style: style, color: color))
     }
 }

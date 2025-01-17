@@ -10,8 +10,8 @@ protocol NetworkServiceProvidable: AnyObject {
 // NetworkService implementation
 final class NetworkService: NetworkServiceProvidable {
 
-    private let baseURL = "https://katapi.nachowyborski.xyz/api"
-    private let kasfyiBaseURL = "https://api-v2-do.kas.fyi"
+    private let baseURL = Constants.baseUrl
+    private let kasfyiBaseURL = Constants.kasfyiBaseUrl
 
     func fetchTokenList() async throws -> [TokenDeployInfo] {
         // TODO: Consider to expose it as a parameter in the function
@@ -25,6 +25,7 @@ final class NetworkService: NetworkServiceProvidable {
             let response = try await dataTask.value
             return response.result
         } catch {
+            print(error)
             throw NetworkError.somethingWentWrong
         }
     }

@@ -27,7 +27,7 @@ struct TextButtonStyle: ButtonStyle {
         }
     }
 
-    private func toneStyle(_ configuration: Configuration) -> ToneStyle.Style {
+    private func toneStyle(_ configuration: Configuration) -> Tone.Style {
         switch state {
         case .idle:
             return configuration.isPressed ? .disabled : .idle

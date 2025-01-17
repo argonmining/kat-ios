@@ -40,7 +40,7 @@ struct InvertedButtonStyle: ButtonStyle {
         }
     }
 
-    private func toneStyle(state: ButtonDS.State) -> ToneStyle.Style {
+    private func toneStyle(state: ButtonDS.State) -> Tone.Style {
         switch state {
             case .disabled: return .disabled
             default: return .idle

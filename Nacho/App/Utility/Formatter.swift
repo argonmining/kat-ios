@@ -23,7 +23,7 @@ struct Formatter {
         let date = Date(timeIntervalSince1970: value)
         let formatter = DateFormatter()
         formatter.dateStyle = .short
-        formatter.timeStyle = .short
+        formatter.timeStyle = .none
         formatter.locale = Locale.current
         return formatter.string(from: date)
     }

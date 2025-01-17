@@ -49,7 +49,7 @@ struct OutlinedButtonStyle: ButtonStyle {
         }
     }
 
-    private func toneStyle(state: ButtonDS.State, isPressed: Bool) -> ToneStyle.Style {
+    private func toneStyle(state: ButtonDS.State, isPressed: Bool) -> Tone.Style {
         switch state {
             case .idle: return isPressed ? .disabled : .idle
             case .disabled: return .disabled
