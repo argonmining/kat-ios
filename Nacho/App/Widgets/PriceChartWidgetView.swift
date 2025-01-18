@@ -13,71 +13,8 @@ struct PriceChartWidgetView: View {
             VStack(alignment: .leading, spacing: Spacing.padding_1) {
                 Text(Localization.widgetChartTitle)
                     .typography(.headline3, color: .textSecondary)
-                // Chart
-                if let tradeData = tradeData {
-                    Chart(tradeData) { item in
-                        AreaMark(
-                            x: .value("Time", Date(timeIntervalSince1970: item.timestamp)),
-                            yStart: .value("Price", item.value),
-                            yEnd: .value("PriceEnd", minValue)
-                        )
-                        .foregroundStyle(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.solidInfo.opacity(0.3),
-                                    Color.solidInfo.opacity(0.0)
-                                ]),
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .interpolationMethod(.catmullRom)
-                        
-                        LineMark(
-                            x: .value("Time", Date(timeIntervalSince1970: item.timestamp)),
-                            y: .value("Price", item.value)
-                        )
-                        .foregroundStyle(.solidInfo)
-                        .lineStyle(.init(lineWidth: 2))
-                        .interpolationMethod(.catmullRom)
-                    }
-                    .chartXAxis {
-                        AxisMarks(values: .automatic) { value in
-                            if value.as(Date.self) != nil {
-                                AxisValueLabel(format: .dateTime.hour().minute())
-                            }
-                            AxisTick()
-                            AxisGridLine()
-                        }
-                    }
-                    .chartYAxis {
-                        AxisMarks(values: .automatic) { value in
-                            if let priceValue = value.as(Double.self) {
-                                AxisValueLabel {
-                                    Text(String(format: "%.8f", priceValue))
-                                }
-                            }
-                            AxisTick()
-                            AxisGridLine()
-                        }
-                    }
-                    .chartYScale(domain: minValue-delta...maxValue+delta)
-                } else {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
-                    Spacer()
-                }
+                LineChartDS(tradeData: $tradeData)
             }
-        }
-        .onChange(of: tradeData) { _, newValue in
-            guard let newValue else { return }
-            minValue = newValue.min(by: { $0.value < $1.value })?.value ?? 0
-            maxValue = newValue.max(by: { $0.value < $1.value })?.value ?? 0
-            delta = (maxValue - minValue) / 3
         }
     }
 }

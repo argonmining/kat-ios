@@ -6,11 +6,21 @@ final class KatScanViewModel {
 
     var searchText: String = ""
     var tokens: [TokenDeployInfo]? = nil
+    var selectedTokenViewModel: TokenDetailsViewModel? = nil
+    var showDetails: Bool = false
 
     private let networkService: NetworkServiceProvidable
 
     init(networkService: NetworkServiceProvidable) {
         self.networkService = networkService
+    }
+
+    func onItemTap(item: TokenDeployInfo) {
+        selectedTokenViewModel = TokenDetailsViewModel(
+            tokenInfo: item,
+            networkService: networkService
+        )
+        showDetails = true
     }
 
     func fetchTokens() async {

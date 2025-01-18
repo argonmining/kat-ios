@@ -14,6 +14,8 @@
 "minted_text" = "Minted";
 "trade_text" = "Trade on KSPR";
 "holders_text" = "Holders";
+"mint_progress_text" = "Mint Progress";
+"search_tokens_placeholder" = "Search tokens";
 
 // Welcome
 "welcome_title" = "Welcome to NACHO the Kat";
