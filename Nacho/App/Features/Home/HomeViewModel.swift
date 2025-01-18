@@ -33,8 +33,6 @@ final class HomeViewModel {
     func fetchTokenHolders() async {
         do {
             let response = try await networkService.fetchHolders(ticker: "NACHO")
-            print(response.count)
-            print(response)
             await MainActor.run {
                 self.holders = response
                     .sorted(by: { $0.amount > $1.amount })

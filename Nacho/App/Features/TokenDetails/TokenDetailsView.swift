@@ -129,9 +129,12 @@ struct TokenDetailsView: View {
             }
 
             if viewModel.showHolders {
-                TopHoldersView(holders: $viewModel.holders)
-                    .padding(.top, Spacing.padding_1)
-                    .padding(.bottom, Spacing.padding_10)
+                TopHoldersView(
+                    holders: $viewModel.holders,
+                    supply: viewModel.tokenInfo.maxSupply
+                )
+                .padding(.top, Spacing.padding_1)
+                .padding(.bottom, Spacing.padding_10)
             }
         }
     }

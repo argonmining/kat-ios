@@ -45,7 +45,10 @@ struct HomeView: View {
 
                 if viewModel.showHolders {
                     WidgetDS {
-                        TopHoldersView(holders: $viewModel.holders)
+                        TopHoldersView(
+                            holders: $viewModel.holders,
+                            supply: NachoInfo.maxSupply
+                        )
                     }
 
                 }

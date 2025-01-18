@@ -3,6 +3,7 @@ import SwiftUI
 struct TopHoldersView: View {
 
     @Binding var holders: [HolderInfo]?
+    let supply: Double
 
     var body: some View {
         if holders == nil {
@@ -68,7 +69,7 @@ struct TopHoldersView: View {
     }
 
     private func holderPercentage(amount: Double) -> String {
-        let value = amount / NachoInfo.maxSupply * 100
+        let value = amount / supply * 100
         return Formatter.formatToNumber(value: value, decimal: 1) + "%"
     }
 }
@@ -87,5 +88,5 @@ struct TopHoldersView: View {
             address: "kaspa:qpyzs5yqaystvrr6nf5p6cswj3zgjrxfghv58m2qc5ufh8324ve370a2k5340",
             amount: 828900
         )
-    ]))
+    ]), supply: 1000000)
 }
