@@ -3,7 +3,7 @@ import Foundation
 final class MockNetworkService: NetworkServiceProvidable {
 
     func fetchTokenList() async throws -> [TokenDeployInfo] {
-        try await Task.sleep(nanoseconds: 3_000_000_000)
+        try await Task.sleep(nanoseconds: 2_000_000_000)
 
         return [
             TokenDeployInfo(
@@ -54,7 +54,7 @@ final class MockNetworkService: NetworkServiceProvidable {
     }
 
     func fetchTokenPriceInfo(ticker: String) async throws -> TokenInfoResponse {
-        try await Task.sleep(nanoseconds: 3_000_000_000)
+        try await Task.sleep(nanoseconds: 2_000_000_000)
 
         return TokenInfoResponse(
             ticker: "NACHO",
@@ -70,7 +70,7 @@ final class MockNetworkService: NetworkServiceProvidable {
     }
 
     func fetchTokenChartResponse(ticker: String) async throws -> TokenChartResponse {
-        try await Task.sleep(nanoseconds: 3_000_000_000)
+        try await Task.sleep(nanoseconds: 2_000_000_000)
 
         return TokenChartResponse(candles: [
             ChartTradeItem(timestamp: 1673500000, value: 0.00008575),

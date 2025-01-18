@@ -14,6 +14,8 @@ struct PriceChartWidgetView: View {
                 Text(Localization.widgetChartTitle)
                     .typography(.headline3, color: .textSecondary)
                 LineChartDS(tradeData: $tradeData)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 200)
             }
         }
     }

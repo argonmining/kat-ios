@@ -30,12 +30,15 @@
 
 // Home
 "home_navigation_title" = "Kat's Home";
-"home_widget_deployed" = "Deployed";
-"home_widget_supply" = "Supply";
-"home_widget_total_mints" = "Total Mints";
 
 // Widgets
 "widget_price_title" = "Price";
 "widget_mc_title" = "Market Cap";
 "widget_volume_title" = "Volume";
 "widget_chart_title" = "Price Chart";
+"widget_deployed" = "Deployed";
+"widget_supply" = "Supply";
+"widget_total_mints" = "Total Mints";
+
+// Edge Cases
+"empty_tokens_text" = "No tokens match your request. Please try adjusting the filter or searching for a different token name.";

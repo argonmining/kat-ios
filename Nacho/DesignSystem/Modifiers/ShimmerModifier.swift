@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ShimmerModifier: ViewModifier {
 
-    @State private var phase: CGFloat = 0
+    @State private var phase: CGFloat = -1
     let animation: Animation
 
     init(animation: Animation) {
@@ -11,14 +11,16 @@ struct ShimmerModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .modifier(
-                AnimatedMask(phase: phase).animation(animation)
-            )
-            .onAppear { phase = 0.8 }
+            .modifier(AnimatedMask(phase: phase))
+            .onAppear {
+                withAnimation(animation) {
+                    phase = 1.5
+                }
+            }
     }
 
     struct AnimatedMask: AnimatableModifier {
-        var phase: CGFloat = 0
+        var phase: CGFloat
         var animatableData: CGFloat {
             get { phase }
             set { phase = newValue }
@@ -31,19 +33,17 @@ struct ShimmerModifier: ViewModifier {
     }
 
     struct GradientMask: View {
-
         let phase: CGFloat
         let centerColor = Color.black
         let edgeColor = Color.black.opacity(0.5)
 
         var body: some View {
             LinearGradient(
-                gradient:
-                    Gradient(stops: [
-                        .init(color: edgeColor, location: phase),
-                        .init(color: centerColor, location: phase + 0.1),
-                        .init(color: edgeColor, location: phase + 0.2)
-                    ]),
+                gradient: Gradient(stops: [
+                    .init(color: edgeColor, location: phase),
+                    .init(color: centerColor, location: phase + 0.1),
+                    .init(color: edgeColor, location: phase + 0.2)
+                ]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -55,7 +55,7 @@ public extension View {
 
     @ViewBuilder func shimmer(
         isActive: Bool = true,
-        animation: Animation = .linear(duration: 1.5).repeatForever(autoreverses: false)
+        animation: Animation = .linear(duration: 1).repeatForever(autoreverses: false)
     ) -> some View {
         if isActive {
             redacted(reason: .placeholder)

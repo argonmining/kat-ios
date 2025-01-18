@@ -21,27 +21,28 @@ struct HomeView: View {
                 HStack(spacing: Spacing.padding_2) {
                     WidgetDS {
                         VStack(alignment: .leading, spacing: Spacing.padding_1) {
-                            Text(Localization.homeWidgetDeployed)
+                            Text(Localization.widgetDeployed)
                                 .typography(.headline3, color: .textSecondary)
-                            Text(stringDate)
+                            Text(dateString)
                                 .typography(.body1)
                                 .padding(.bottom, Spacing.padding_1)
-                            Text(Localization.homeWidgetSupply)
+                            Text(Localization.widgetSupply)
                                 .typography(.headline3, color: .textSecondary)
-                            Text(stringSupply)
+                            Text(supplyString)
                                 .typography(.body1)
                                 .padding(.bottom, Spacing.padding_1)
-                            Text(Localization.homeWidgetTotalMints)
+                            Text(Localization.widgetTotalMints)
                                 .typography(.headline3, color: .textSecondary)
-                            Text(stringTotalMints)
+                            Text(totalMintsString)
                                 .typography(.body1)
                                 .padding(.bottom, Spacing.padding_1)
                         }
                     }
                     PriceWidgetView(viewData: $viewModel.tokenPriceData)
                 }
+
                 PriceChartWidgetView(tradeData: $viewModel.chartData)
-                    .frame(height: 250)
+
                 Spacer()
             }
             .padding(Spacing.padding_2)
@@ -57,16 +58,16 @@ struct HomeView: View {
         }
     }
 
-    private var stringSupply: String {
-        return Formatter.formatToNumber(value: NachoInfo.maxSupply)
+    private var supplyString: String {
+        Formatter.formatToNumber(value: NachoInfo.maxSupply)
     }
 
-    private var stringTotalMints: String {
-        return Formatter.formatToNumber(value: NachoInfo.mintTotal)
+    private var totalMintsString: String {
+        Formatter.formatToNumber(value: NachoInfo.mintTotal)
     }
 
-    private var stringDate: String {
-        return Formatter.formatDate(value: NachoInfo.releaseTimeInterval)
+    private var dateString: String {
+        Formatter.formatDate(value: NachoInfo.releaseTimeInterval)
     }
 }
 

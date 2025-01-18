@@ -27,4 +27,13 @@ struct Formatter {
         formatter.locale = Locale.current
         return formatter.string(from: date)
     }
+
+    static func formatDateAndTime(value: TimeInterval) -> String {
+        let date = Date(timeIntervalSince1970: value)
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        formatter.locale = Locale.current
+        return formatter.string(from: date)
+    }
 }

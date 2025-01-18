@@ -26,15 +26,18 @@ enum Localization {
 
     // Home
     static let homeNavigationTitle = "home_navigation_title".localized
-    static let homeWidgetDeployed = "home_widget_deployed".localized
-    static let homeWidgetSupply = "home_widget_supply".localized
-    static let homeWidgetTotalMints = "home_widget_total_mints".localized
 
     // Widgets
     static let widgetPriceTitle = "widget_price_title".localized
     static let widgetMCTitle = "widget_mc_title".localized
     static let widgetVolumeTitle = "widget_volume_title".localized
     static let widgetChartTitle = "widget_chart_title".localized
+    static let widgetDeployed = "widget_deployed".localized
+    static let widgetSupply = "widget_supply".localized
+    static let widgetTotalMints = "widget_total_mints".localized
+
+    // Edge Cases
+    static let emptyTokensText = "empty_tokens_text".localized
 }
 
 extension String {

@@ -20,11 +20,11 @@ struct TokenDetailsView: View {
                     if viewModel.showTradeInfo {
                         HStack(spacing: Spacing.padding_1) {
                             Spacer()
-                            Text("$\(stringPrice)")
+                            Text("$\(priceString)")
                                 .typography(.numeric)
                                 .lineLimit(1)
                                 .shimmer(isActive: viewModel.tokenPriceData == nil)
-                            PillDS(text: stringChange, style: .large, color: changeColor)
+                            PillDS(text: changeString, style: .large, color: changeColor)
                                 .shimmer(isActive: viewModel.tokenPriceData == nil)
                         }
                         LineChartDS(tradeData: $viewModel.chartData)
@@ -32,10 +32,19 @@ struct TokenDetailsView: View {
                             .frame(height: 200)
                             .padding(.bottom, Spacing.padding_1)
                         HStack {
+                            Text(Localization.widgetMCTitle + ":")
+                                .typography(.body1, color: .textSecondary)
+                            Spacer()
+                            Text(marketCapString)
+                                .typography(.body1)
+                                .lineLimit(1)
+                                .shimmer(isActive: viewModel.tokenPriceData == nil)
+                        }
+                        HStack {
                             Text(Localization.widgetVolumeTitle + ":")
                                 .typography(.body1, color: .textSecondary)
                             Spacer()
-                            Text(stringVolume)
+                            Text(volumeString)
                                 .typography(.body1)
                                 .lineLimit(1)
                                 .shimmer(isActive: viewModel.tokenPriceData == nil)
@@ -44,9 +53,20 @@ struct TokenDetailsView: View {
 
                     Text(Localization.mintProgressText)
                         .typography(.headline3, color: .textSecondary)
+                        .padding(.top, Spacing.padding_1)
+
                     segmentedBar
+
                     HStack(alignment: .bottom) {
-                        Text(Localization.premintedText)
+                        Text(Localization.widgetDeployed + ":")
+                            .typography(.body1, color: .textSecondary)
+                        Spacer()
+                        Text(deployDateString)
+                            .typography(.body1)
+                            .lineLimit(1)
+                    }
+                    HStack(alignment: .bottom) {
+                        Text(Localization.premintedText + ":")
                             .typography(.body1, color: .textSecondary)
                         Spacer()
                         Text(premintedString)
@@ -158,19 +178,19 @@ struct TokenDetailsView: View {
         .frame(height: 8)
     }
 
-    private var stringPrice: String {
+    private var priceString: String {
         String(format: "%.8f", viewModel.tokenPriceData?.price ?? 0)
     }
 
-    private var stringMarketCap: String {
-        return Formatter.formatToUSD(value: viewModel.tokenPriceData?.marketCap ?? 0)
+    private var marketCapString: String {
+        Formatter.formatToUSD(value: viewModel.tokenPriceData?.marketCap ?? 0)
     }
 
-    private var stringChange: String {
+    private var changeString: String {
         String(format: "%.0f%%", viewModel.tokenPriceData?.change ?? 0)
     }
 
-    private var stringVolume: String {
+    private var volumeString: String {
         return Formatter.formatToUSD(value: viewModel.tokenPriceData?.volume ?? 0)
     }
 
@@ -190,8 +210,12 @@ struct TokenDetailsView: View {
         Formatter.formatToNumber(value: viewModel.tokenInfo.holdersTotal)
     }
 
+    private var deployDateString: String {
+        Formatter.formatDateAndTime(value: NachoInfo.releaseTimeInterval)
+    }
+
     private var changeColor: Color {
-        return viewModel.tokenPriceData?.change ?? 0 >= 0 ? .solidSuccess : .solidDanger
+        viewModel.tokenPriceData?.change ?? 0 >= 0 ? .solidSuccess : .solidDanger
     }
 }
 
