@@ -43,6 +43,13 @@ struct HomeView: View {
 
                 PriceChartWidgetView(tradeData: $viewModel.chartData)
 
+                if viewModel.showHolders {
+                    WidgetDS {
+                        TopHoldersView(holders: $viewModel.holders)
+                    }
+
+                }
+
                 Spacer()
             }
             .padding(Spacing.padding_2)
@@ -55,6 +62,7 @@ struct HomeView: View {
         )
         .task {
             await viewModel.fetchPriceInfo()
+            await viewModel.fetchTokenHolders()
         }
     }
 

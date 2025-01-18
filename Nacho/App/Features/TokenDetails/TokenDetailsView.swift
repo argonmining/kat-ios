@@ -8,100 +8,24 @@ struct TokenDetailsView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Spacing.padding_2) {
-
-                    HStack(spacing: Spacing.padding_1_5) {
-                        asyncImage
-                        Spacer()
-                        launchPill
+            ZStack {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: Spacing.padding_2) {
+                        content
                     }
-
-                    if viewModel.showTradeInfo {
-                        HStack(spacing: Spacing.padding_1) {
-                            Spacer()
-                            Text("$\(priceString)")
-                                .typography(.numeric)
-                                .lineLimit(1)
-                                .shimmer(isActive: viewModel.tokenPriceData == nil)
-                            PillDS(text: changeString, style: .large, color: changeColor)
-                                .shimmer(isActive: viewModel.tokenPriceData == nil)
-                        }
-                        LineChartDS(tradeData: $viewModel.chartData)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 200)
-                            .padding(.bottom, Spacing.padding_1)
-                        HStack {
-                            Text(Localization.widgetMCTitle + ":")
-                                .typography(.body1, color: .textSecondary)
-                            Spacer()
-                            Text(marketCapString)
-                                .typography(.body1)
-                                .lineLimit(1)
-                                .shimmer(isActive: viewModel.tokenPriceData == nil)
-                        }
-                        HStack {
-                            Text(Localization.widgetVolumeTitle + ":")
-                                .typography(.body1, color: .textSecondary)
-                            Spacer()
-                            Text(volumeString)
-                                .typography(.body1)
-                                .lineLimit(1)
-                                .shimmer(isActive: viewModel.tokenPriceData == nil)
-                        }
-                    }
-
-                    Text(Localization.mintProgressText)
-                        .typography(.headline3, color: .textSecondary)
-                        .padding(.top, Spacing.padding_1)
-
-                    segmentedBar
-
-                    HStack(alignment: .bottom) {
-                        Text(Localization.widgetDeployed + ":")
-                            .typography(.body1, color: .textSecondary)
-                        Spacer()
-                        Text(deployDateString)
-                            .typography(.body1)
-                            .lineLimit(1)
-                    }
-                    HStack(alignment: .bottom) {
-                        Text(Localization.premintedText + ":")
-                            .typography(.body1, color: .textSecondary)
-                        Spacer()
-                        Text(premintedString)
-                            .typography(.body1)
-                            .lineLimit(1)
-                    }
-                    HStack(alignment: .bottom) {
-                        Text(Localization.mintedText + ":")
-                            .typography(.body1, color: .textSecondary)
-                        Spacer()
-                        Text(mintedString + " / " + supplyString)
-                            .typography(.body1)
-                            .lineLimit(1)
-                    }
-                    HStack {
-                        Text(Localization.holdersText + ":")
-                            .typography(.body1, color: .textSecondary)
-                        Spacer()
-                        Text(holdersString)
-                            .typography(.body1)
-                            .lineLimit(1)
-                    }
-                    .padding(.bottom, Spacing.padding_1)
-                    ButtonDS(
-                        Localization.tradeText,
-                        style: .contained,
-                        isSmall: true,
-                        icon: .leading(
-                            Image(systemName: "arrow.left.arrow.right")
-                        )
-                    ) {
-                        // TODO: Implement redirect to KSPR Bot
-                    }
+                    .padding(Spacing.padding_2)
                 }
-                .padding(Spacing.padding_2)
+
+                VStack {
+                    Spacer()
+                    tradeButton
+                        .padding(.horizontal, Spacing.padding_2)
+                        .padding(.top, Spacing.padding_2)
+                        .padding(.bottom, Spacing.padding_5)
+                        .background(Color.surfaceForeground)
+                }
+                .frame(maxWidth: .infinity)
+                .ignoresSafeArea(edges: .bottom)
             }
             .navigationTitle(viewModel.tokenInfo.tick)
             .toolbar {
@@ -117,7 +41,111 @@ struct TokenDetailsView: View {
             .background(Color.surfaceForeground.ignoresSafeArea())
             .task {
                 await viewModel.fetchPriceInfo()
+                await viewModel.fetchTokenHolders()
             }
+        }
+    }
+
+    private var content: some View {
+        VStack(alignment: .leading, spacing: Spacing.padding_2) {
+
+            HStack(spacing: Spacing.padding_1_5) {
+                asyncImage
+                Spacer()
+                launchPill
+            }
+
+            if viewModel.showTradeInfo {
+                HStack(spacing: Spacing.padding_1) {
+                    Spacer()
+                    Text("$\(priceString)")
+                        .typography(.numeric)
+                        .lineLimit(1)
+                        .shimmer(isActive: viewModel.tokenPriceData == nil)
+                    PillDS(text: changeString, style: .large, color: changeColor)
+                        .shimmer(isActive: viewModel.tokenPriceData == nil)
+                }
+                LineChartDS(tradeData: $viewModel.chartData)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 200)
+                    .padding(.bottom, Spacing.padding_1)
+                HStack {
+                    Text(Localization.widgetMCTitle + ":")
+                        .typography(.body1, color: .textSecondary)
+                    Spacer()
+                    Text(marketCapString)
+                        .typography(.body1)
+                        .lineLimit(1)
+                        .shimmer(isActive: viewModel.tokenPriceData == nil)
+                }
+                HStack {
+                    Text(Localization.widgetVolumeTitle + ":")
+                        .typography(.body1, color: .textSecondary)
+                    Spacer()
+                    Text(volumeString)
+                        .typography(.body1)
+                        .lineLimit(1)
+                        .shimmer(isActive: viewModel.tokenPriceData == nil)
+                }
+            }
+
+            Text(Localization.mintProgressText)
+                .typography(.headline3, color: .textSecondary)
+                .padding(.top, Spacing.padding_1)
+
+            segmentedBar
+
+            HStack(alignment: .bottom) {
+                Text(Localization.widgetDeployed + ":")
+                    .typography(.body1, color: .textSecondary)
+                Spacer()
+                Text(deployDateString)
+                    .typography(.body1)
+                    .lineLimit(1)
+            }
+            HStack(alignment: .bottom) {
+                Text(Localization.premintedText + ":")
+                    .typography(.body1, color: .textSecondary)
+                Spacer()
+                Text(premintedString)
+                    .typography(.body1)
+                    .lineLimit(1)
+            }
+            HStack(alignment: .bottom) {
+                Text(Localization.mintedText + ":")
+                    .typography(.body1, color: .textSecondary)
+                Spacer()
+                Text(mintedString + " / " + supplyString)
+                    .typography(.body1)
+                    .lineLimit(1)
+            }
+            HStack {
+                Text(Localization.holdersText + ":")
+                    .typography(.body1, color: .textSecondary)
+                Spacer()
+                Text(holdersString)
+                    .typography(.body1)
+                    .lineLimit(1)
+            }
+
+            if viewModel.showHolders {
+                TopHoldersView(holders: $viewModel.holders)
+                    .padding(.top, Spacing.padding_1)
+                    .padding(.bottom, Spacing.padding_10)
+            }
+        }
+    }
+
+    private var tradeButton: some View {
+        ButtonDS(
+            Localization.tradeText,
+            style: .contained,
+            isSmall: true,
+            icon: .leading(
+                Image(systemName: "arrow.left.arrow.right")
+            )
+        ) {
+            // TODO: Implement redirect to KSPR Bot
         }
     }
 
@@ -232,6 +260,3 @@ struct TokenDetailsView: View {
         releaseTimeInterval: 1737025209359
     ), networkService: MockNetworkService()))
 }
-
-
-

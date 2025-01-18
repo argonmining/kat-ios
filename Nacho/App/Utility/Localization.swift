@@ -10,6 +10,7 @@ enum Localization {
     static let mintedText = "minted_text".localized
     static let tradeText = "trade_text".localized
     static let holdersText = "holders_text".localized
+    static let topHoldersText = "top_holders_text".localized
     static let mintProgressText = "mint_progress_text".localized
     static let searchTokensPlaceholder = "search_tokens_placeholder".localized
 

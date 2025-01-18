@@ -11,10 +11,10 @@ struct Formatter {
         return formatter.string(from: NSNumber(value: value)) ?? ""
     }
 
-    static func formatToNumber(value: Double) -> String {
+    static func formatToNumber(value: Double, decimal: Int = 0) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 0
+        formatter.maximumFractionDigits = decimal
         formatter.locale = Locale(identifier: "en_US")
         return formatter.string(from: NSNumber(value: value)) ?? ""
     }

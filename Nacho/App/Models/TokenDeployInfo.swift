@@ -14,11 +14,11 @@ struct TokenDeployInfo: Decodable, Hashable {
     let limit: Double
     let preMinted: Double
     let minted: Double
-//    let state: TokenState
     let holdersTotal: Double
     let mintTotal: Double
     let logoPath: String
     let releaseTimeInterval: TimeInterval
+    let holders: [HolderInfo]
 
     enum CodingKeys: String, CodingKey {
         case tick
@@ -32,6 +32,7 @@ struct TokenDeployInfo: Decodable, Hashable {
         case holderTotal
         case mintTotal
         case logo
+        case holder
     }
 
     init(
@@ -40,29 +41,36 @@ struct TokenDeployInfo: Decodable, Hashable {
         limit: Double,
         preMinted: Double,
         minted: Double,
-//        state: TokenState,
         holdersTotal: Double,
         mintTotal: Double,
         logoPath: String,
-        releaseTimeInterval: TimeInterval
+        releaseTimeInterval: TimeInterval,
+        holders: [HolderInfo] = []
     ) {
         self.tick = tick
         self.maxSupply = maxSupply
         self.limit = limit
         self.preMinted = preMinted
         self.minted = minted
-//        self.state = state
         self.holdersTotal = holdersTotal
         self.mintTotal = mintTotal
         self.logoPath = logoPath
         self.releaseTimeInterval = releaseTimeInterval
+        self.holders = holders
     }
 
     init(from decoder: Decoder) throws {
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
         tick = try container.decode(String.self, forKey: .tick)
-        let decimal = try container.decode(Int.self, forKey: .dec)
+        let decimal: Int
+        if let _decimal = try? container.decode(Int.self, forKey: .dec) {
+            decimal = _decimal
+        } else if let _decimalString = try? container.decode(String.self, forKey: .dec), let _decimal = Int(_decimalString) {
+            decimal = _decimal
+        } else {
+            decimal = 8
+        }
 
         func parseValue(_ key: CodingKeys) throws -> Double {
             guard
@@ -82,8 +90,6 @@ struct TokenDeployInfo: Decodable, Hashable {
         limit = try parseValue(.lim)
         preMinted = try parseValue(.pre)
         minted = try parseValue(.minted)
-
-//        state = try container.decode(TokenState.self, forKey: .state)
 
         holdersTotal = try container.decode(Double.self, forKey: .holderTotal)
         mintTotal = try container.decode(Double.self, forKey: .mintTotal)
@@ -106,5 +112,6 @@ struct TokenDeployInfo: Decodable, Hashable {
             )
         }
         releaseTimeInterval = timeInterval / 1000
+        holders = (try? container.decode([HolderInfo].self, forKey: .holder)) ?? []
     }
 }

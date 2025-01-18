@@ -3,8 +3,10 @@ import Alamofire
 // Protocol for the NetworkService
 protocol NetworkServiceProvidable: AnyObject {
     func fetchTokenList() async throws -> [TokenDeployInfo]
+    func fetchTokenInfo(ticker: String) async throws -> TokenDeployInfo
     func fetchTokenPriceInfo(ticker: String) async throws -> TokenInfoResponse
     func fetchTokenChartResponse(ticker: String) async throws -> TokenChartResponse
+    func fetchHolders(ticker: String) async throws -> [HolderInfo]
 }
 
 // NetworkService implementation
@@ -20,6 +22,20 @@ final class NetworkService: NetworkServiceProvidable {
         let dataTask = AF.request(baseURL + Endpoint.tokenList.value, parameters: parameters)
             .validate()
             .serializingDecodable(ResponseWrapper<[TokenDeployInfo]>.self)
+
+        do {
+            let response = try await dataTask.value
+            return response.result
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
+
+    func fetchTokenInfo(ticker: String) async throws -> TokenDeployInfo {
+        let dataTask = AF.request(baseURL + Endpoint.tokenInfo(ticker).value)
+            .validate()
+            .serializingDecodable(ResponseWrapper<TokenDeployInfo>.self)
 
         do {
             let response = try await dataTask.value
@@ -57,20 +73,37 @@ final class NetworkService: NetworkServiceProvidable {
             throw NetworkError.somethingWentWrong
         }
     }
+
+    func fetchHolders(ticker: String) async throws -> [HolderInfo] {
+        let dataTask = AF.request(kasfyiBaseURL + Endpoint.tokenInfoNoChart(ticker).value)
+            .validate()
+            .serializingDecodable(HoldersResponse.self)
+        do {
+            let response = try await dataTask.value
+            return response.holders
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
 }
 
 private extension NetworkService {
 
     enum Endpoint {
         case tokenList
+        case tokenInfo(String)
         case tokenPriceInfo(String)
         case tokenChart(String)
+        case tokenInfoNoChart(String)
 
         var value: String {
             switch self {
             case .tokenList: return "/token/tokenlist"
+            case .tokenInfo(let ticker): return "/token/\(ticker)"
             case .tokenPriceInfo(let ticker): return "/token/krc20/\(ticker)/info"
             case .tokenChart(let ticker): return "/token/krc20/\(ticker)/charts?type=candles&interval=1d"
+            case .tokenInfoNoChart(let ticker): return "/token/krc20/\(ticker)/info?includeCharts=false"
             }
         }
     }
