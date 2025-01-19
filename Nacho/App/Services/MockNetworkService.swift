@@ -128,4 +128,14 @@ final class MockNetworkService: NetworkServiceProvidable {
             )
         ]
     }
+
+    func fetchMintHeatmapForWeek() async throws -> [MintInfo] {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+
+        return [
+            .init(tick: "NACHO", mintTotal: 34000),
+            .init(tick: "GHOAD", mintTotal: 2400),
+            .init(tick: "KASPER", mintTotal: 6232)
+        ]
+    }
 }

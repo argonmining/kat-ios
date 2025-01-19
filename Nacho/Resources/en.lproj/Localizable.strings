@@ -41,5 +41,10 @@
 "widget_supply" = "Supply";
 "widget_total_mints" = "Total Mints";
 
+// Mintint
+"mint_heatmap_title" = "Mint Heatmap";
+"mint_heatmap_button_text" = "Mint Map";
+
 // Edge Cases
 "empty_tokens_text" = "No tokens match your request. Please try adjusting the filter or searching for a different token name.";
+"empty_view_text" = "Nothing to show :(";

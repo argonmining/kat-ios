@@ -16,6 +16,13 @@ struct KatScanView: View {
                 .frame(maxWidth: .infinity)
             } else {
                 ScrollView {
+
+                    if viewModel.searchText.isEmpty {
+                        buttons
+                            .padding(.horizontal, Spacing.padding_2)
+                            .padding(.bottom, Spacing.padding_1)
+                    }
+
                     if viewModel.tokens != nil {
                         LazyVStack(spacing: Spacing.padding_2) {
                             ForEach(viewModel.filteredTokens, id: \.self) { token in
@@ -25,7 +32,7 @@ struct KatScanView: View {
                                     }
                             }
                         }
-                        .padding(Spacing.padding_2)
+                        .padding(.horizontal, Spacing.padding_2)
                         .sheet(isPresented: $viewModel.showDetails) {
                             if viewModel.selectedTokenViewModel != nil {
                                 TokenDetailsView(viewModel: viewModel.selectedTokenViewModel!)
@@ -42,7 +49,7 @@ struct KatScanView: View {
                             TokenListItemPlaceholderView()
                             TokenListItemPlaceholderView()
                         }
-                        .padding(Spacing.padding_2)
+                        .padding(.horizontal, Spacing.padding_2)
                     }
                 }
             }
@@ -81,6 +88,29 @@ struct KatScanView: View {
         }
         .onChange(of: viewModel.searchText) {
             viewModel.filterTokens()
+        }
+    }
+
+    private var buttons: some View {
+        HStack {
+            IconButtonDS(
+                iconName: "chart.bar.xaxis.ascending.badge.clock",
+                text: Localization.mintHeatmapButtonText
+            ) {
+                viewModel.onShowMintMapAction()
+            }
+            .sheet(isPresented: $viewModel.showMintMap) {
+                if viewModel.tickerGridViewModel != nil {
+                    NavigationView {
+                        TickerGridView(viewModel: viewModel.tickerGridViewModel!)
+                    }
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                } else {
+                    EmptyView()
+                }
+            }
+            Spacer()
         }
     }
 }

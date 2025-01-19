@@ -8,16 +8,42 @@ final class KatScanViewModel {
     var tokens: [TokenDeployInfo]? = nil
     var filteredTokens: [TokenDeployInfo] = []
     var selectedTokenViewModel: TokenDetailsViewModel? = nil
+    var tickerGridViewModel: TickerGridViewModel? = nil
     var showDetails: Bool = false
     var showFilter: Bool = false
+    var showMintMap: Bool = false
     var isFiltering: Bool = false
     var filterState: TokensFilterState = .none
     var isEmpty: Bool = false
+    private var tickers: [MintInfo]? = nil
 
     private let networkService: NetworkServiceProvidable
 
     init(networkService: NetworkServiceProvidable) {
         self.networkService = networkService
+    }
+
+    func onShowMintMapAction() {
+        tickerGridViewModel = TickerGridViewModel(
+            networkService: networkService,
+            tickers: tickers,
+            onTickerSelected: { [weak self] ticker in
+                guard let self = self else { return }
+                self.showMintMap = false
+                if let tokenInfo = tokens?.filter({$0.tick == ticker}).first {
+                    selectedTokenViewModel = TokenDetailsViewModel(
+                        tokenInfo: tokenInfo,
+                        networkService: self.networkService
+                    )
+                    self.showDetails = true
+                }
+                tickerGridViewModel = nil
+            }, onTickersLoaded: { [weak self] tickers in
+                guard let self = self else { return }
+                self.tickers = tickers
+            }
+        )
+        showMintMap = true
     }
 
     func onFilterStateChange() {

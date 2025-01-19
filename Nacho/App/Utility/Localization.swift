@@ -36,9 +36,14 @@ enum Localization {
     static let widgetDeployed = "widget_deployed".localized
     static let widgetSupply = "widget_supply".localized
     static let widgetTotalMints = "widget_total_mints".localized
+    
+    // Mintint
+    static let mintHeatmapTitle = "mint_heatmap_title".localized
+    static let mintHeatmapButtonText = "mint_heatmap_button_text".localized
 
     // Edge Cases
     static let emptyTokensText = "empty_tokens_text".localized
+    static let emptyViewText = "empty_view_text".localized
 }
 
 extension String {

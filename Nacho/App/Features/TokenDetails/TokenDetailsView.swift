@@ -4,7 +4,6 @@ import SwiftUI
 struct TokenDetailsView: View {
 
     @State var viewModel: TokenDetailsViewModel
-    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationView {
@@ -28,16 +27,6 @@ struct TokenDetailsView: View {
                 .ignoresSafeArea(edges: .bottom)
             }
             .navigationTitle(viewModel.tokenInfo.tick)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(systemName: "xmark")
-                            .fontWeight(.medium)
-                    }
-                }
-            }
             .background(Color.surfaceForeground.ignoresSafeArea())
             .task {
                 await viewModel.fetchPriceInfo()

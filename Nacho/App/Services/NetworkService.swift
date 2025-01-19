@@ -1,4 +1,5 @@
 import Alamofire
+import Foundation
 
 // Protocol for the NetworkService
 protocol NetworkServiceProvidable: AnyObject {
@@ -7,6 +8,7 @@ protocol NetworkServiceProvidable: AnyObject {
     func fetchTokenPriceInfo(ticker: String) async throws -> TokenInfoResponse
     func fetchTokenChartResponse(ticker: String) async throws -> TokenChartResponse
     func fetchHolders(ticker: String) async throws -> [HolderInfo]
+    func fetchMintHeatmapForWeek() async throws -> [MintInfo]
 }
 
 // NetworkService implementation
@@ -86,6 +88,31 @@ final class NetworkService: NetworkServiceProvidable {
             throw NetworkError.somethingWentWrong
         }
     }
+
+    func fetchMintHeatmapForWeek() async throws -> [MintInfo] {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let now = Date()
+        guard let weekBefore = Calendar.current.date(byAdding: .day, value: -7, to: now) else {
+            throw NetworkError.somethingWentWrong
+        }
+        let nowString = formatter.string(from: now)
+        let weekBeforeString = formatter.string(from: weekBefore)
+        print(nowString)
+        print(weekBeforeString)
+        let parameters: [String: Any] = ["startDate": weekBeforeString, "endDate": nowString]
+
+        let dataTask = AF.request(baseURL + Endpoint.tokensMintTotal.value, parameters: parameters)
+            .validate()
+            .serializingDecodable([MintInfo].self)
+
+        do {
+            return try await dataTask.value
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
 }
 
 private extension NetworkService {
@@ -96,6 +123,7 @@ private extension NetworkService {
         case tokenPriceInfo(String)
         case tokenChart(String)
         case tokenInfoNoChart(String)
+        case tokensMintTotal
 
         var value: String {
             switch self {
@@ -104,6 +132,7 @@ private extension NetworkService {
             case .tokenPriceInfo(let ticker): return "/token/krc20/\(ticker)/info"
             case .tokenChart(let ticker): return "/token/krc20/\(ticker)/charts?type=candles&interval=1d"
             case .tokenInfoNoChart(let ticker): return "/token/krc20/\(ticker)/info?includeCharts=false"
+            case .tokensMintTotal: return "/minting/mint-totals"
             }
         }
     }
