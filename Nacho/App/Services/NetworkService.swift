@@ -9,6 +9,8 @@ protocol NetworkServiceProvidable: AnyObject {
     func fetchTokenChartResponse(ticker: String) async throws -> TokenChartResponse
     func fetchHolders(ticker: String) async throws -> [HolderInfo]
     func fetchMintHeatmapForWeek() async throws -> [MintInfo]
+    func fetchAddressTokenList(address: String) async throws -> [AddressTokenInfo]
+    func fetchAddressBalance(address: String) async throws -> AddressBalance
 }
 
 // NetworkService implementation
@@ -16,6 +18,8 @@ final class NetworkService: NetworkServiceProvidable {
 
     private let baseURL = Constants.baseUrl
     private let kasfyiBaseURL = Constants.kasfyiBaseUrl
+    private let kasplexBaseURL = Constants.kasplexBaseUrl
+    private let kaspaOrgBaseURL = Constants.kaspaOrgBaseUrl
 
     func fetchTokenList() async throws -> [TokenDeployInfo] {
         // TODO: Consider to expose it as a parameter in the function
@@ -113,6 +117,34 @@ final class NetworkService: NetworkServiceProvidable {
             throw NetworkError.somethingWentWrong
         }
     }
+
+    func fetchAddressTokenList(address: String) async throws -> [AddressTokenInfo] {
+        let dataTask = AF.request(kasplexBaseURL + Endpoint.addressTokenList(address).value)
+            .validate()
+            .serializingDecodable(ResponseWrapper<[AddressTokenInfo]>.self)
+
+        do {
+            let response = try await dataTask.value
+            return response.result
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
+
+    func fetchAddressBalance(address: String) async throws -> AddressBalance {
+        let dataTask = AF.request(kaspaOrgBaseURL + Endpoint.addressBalance(address).value)
+            .validate()
+            .serializingDecodable(AddressBalance.self)
+
+        do {
+            let response = try await dataTask.value
+            return response
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
 }
 
 private extension NetworkService {
@@ -124,6 +156,8 @@ private extension NetworkService {
         case tokenChart(String)
         case tokenInfoNoChart(String)
         case tokensMintTotal
+        case addressTokenList(String)
+        case addressBalance(String)
 
         var value: String {
             switch self {
@@ -133,6 +167,8 @@ private extension NetworkService {
             case .tokenChart(let ticker): return "/token/krc20/\(ticker)/charts?type=candles&interval=1d"
             case .tokenInfoNoChart(let ticker): return "/token/krc20/\(ticker)/info?includeCharts=false"
             case .tokensMintTotal: return "/minting/mint-totals"
+            case .addressTokenList(let address): return "/address/\(address)/tokenlist"
+            case .addressBalance(let address): return "/addresses/\(address)/balance"
             }
         }
     }

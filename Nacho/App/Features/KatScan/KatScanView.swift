@@ -92,9 +92,9 @@ struct KatScanView: View {
     }
 
     private var buttons: some View {
-        HStack {
+        HStack(spacing: Spacing.padding_1) {
             IconButtonDS(
-                iconName: "chart.bar.xaxis.ascending.badge.clock",
+                iconName: "square.grid.3x3.fill",
                 text: Localization.mintHeatmapButtonText
             ) {
                 viewModel.onShowMintMapAction()
@@ -103,6 +103,23 @@ struct KatScanView: View {
                 if viewModel.tickerGridViewModel != nil {
                     NavigationView {
                         TickerGridView(viewModel: viewModel.tickerGridViewModel!)
+                    }
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                } else {
+                    EmptyView()
+                }
+            }
+            IconButtonDS(
+                iconName: "sparkle.magnifyingglass",
+                text: Localization.buttonAddressText
+            ) {
+                viewModel.onShowAddressInfoAction()
+            }
+            .sheet(isPresented: $viewModel.showAddressInfo) {
+                if viewModel.addressInfoViewModel != nil {
+                    NavigationView {
+                        AddressInfoView(viewModel: viewModel.addressInfoViewModel!)
                     }
                     .presentationDetents([.large])
                     .presentationDragIndicator(.visible)

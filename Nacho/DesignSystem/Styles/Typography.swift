@@ -8,6 +8,7 @@ struct Typography: ViewModifier {
         case headline3
         case subtitle
         case numeric
+        case numeric2
         case button
         case body1
         case body2
@@ -35,6 +36,8 @@ struct Typography: ViewModifier {
             return .system(size: 16, weight: .bold, design: .default)
         case .numeric:
             return .system(size: 32, weight: .regular, design: .monospaced)
+        case .numeric2:
+            return .system(size: 28, weight: .regular, design: .monospaced)
         case .button:
             return .system(size: 16, weight: .bold, design: .default)
         case .body1:

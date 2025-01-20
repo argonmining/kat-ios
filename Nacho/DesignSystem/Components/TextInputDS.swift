@@ -4,17 +4,26 @@ struct TextInputDS: View {
 
     private let placeholder: String
     private let prefix: String?
+    private let actionIcon: String?
+    private let action: (() -> Void)?
+    private var isButtonShowing: Bool
     @Binding private var text: String
     @FocusState private var isFocused: Bool
 
     init(
         placeholder: String,
         text: Binding<String>,
-        prefix: String? = nil
+        isButtonShowing: Bool,
+        prefix: String? = nil,
+        actionIcon: String? = nil,
+        action: (() -> Void)? = nil
     ) {
         self.placeholder = placeholder
         self._text = text
+        self.isButtonShowing = isButtonShowing
         self.prefix = prefix
+        self.actionIcon = actionIcon
+        self.action = action
     }
 
     var body: some View {
@@ -26,13 +35,23 @@ struct TextInputDS: View {
             TextField(placeholder, text: $text)
                 .typography(.body2)
                 .focused($isFocused)
+            if isButtonShowing && actionIcon != nil {
+                Button(action: {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    action?()
+                }) {
+                    Image(systemName: actionIcon!)
+                        .foregroundColor(Color.accentColor)
+                }
+                
+            }
         }
         .padding(Spacing.padding_1_5)
         .background(
             RoundedRectangle(cornerRadius: Radius.radius_2)
                 .stroke(
                     isFocused ? Color.borderRegularAccent : Color.borderRegularPrimary,
-                    lineWidth: isFocused ? 3 : 1
+                    lineWidth: isFocused ? 2 : 1
                 )
                 .background(
                     RoundedRectangle(cornerRadius: Radius.radius_2)
@@ -44,10 +63,20 @@ struct TextInputDS: View {
 
 #Preview {
     VStack {
-        TextInputDS(placeholder: "Word", text: .constant(""))
-            .padding()
-        TextInputDS(placeholder: "Word", text: .constant(""), prefix: "12.")
-            .padding()
+        TextInputDS(
+            placeholder: "Word",
+            text: .constant(""),
+            isButtonShowing: true,
+            actionIcon: "document.on.document"
+        )
+        .padding()
+        TextInputDS(
+            placeholder: "Word",
+            text: .constant(""),
+            isButtonShowing: false,
+            prefix: "12."
+        )
+        .padding()
     }
     .background(Color.surfaceBackground)
 }

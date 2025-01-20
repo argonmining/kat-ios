@@ -138,4 +138,22 @@ final class MockNetworkService: NetworkServiceProvidable {
             .init(tick: "KASPER", mintTotal: 6232)
         ]
     }
+
+    func fetchAddressTokenList(address: String) async throws -> [AddressTokenInfo] {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+
+        return [
+            .init(ticker: "NACHO", balance: 34000, locked: 0),
+            .init(ticker: "GHOAD", balance: 34000, locked: 0),
+            .init(ticker: "KASPER", balance: 34000, locked: 0)
+        ]
+    }
+
+    func fetchAddressBalance(address: String) async throws -> AddressBalance {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return .init(
+            address: "kaspa:qr2x6lnhqe75qgcjvcbcvbulmu7rt077kwerwerrtq3qjxh6tdfcgdfg",
+            balance: 453423423344
+        )
+    }
 }

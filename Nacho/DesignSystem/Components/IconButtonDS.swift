@@ -28,7 +28,6 @@ struct IconButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .typography(.button, color: .textPrimary)
             .toneStyle(configuration.isPressed ? .disabled : .idle)
             .padding(.vertical, Spacing.padding_1_5)
             .padding(.horizontal, Spacing.padding_1_5)

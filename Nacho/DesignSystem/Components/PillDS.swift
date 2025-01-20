@@ -5,26 +5,35 @@ struct PillDS: View {
     private let text: String
     private let style: Style
     private let color: Color
+    private let iconName: String?
 
     init(
         text: String,
         style: Style = .small,
-        color: Color = .solidSuccess
+        color: Color = .solidSuccess,
+        iconName: String? = nil
     ) {
         self.text = text
         self.style = style
         self.color = color
+        self.iconName = iconName
     }
 
     var body: some View {
-        Text(text)
-            .typography(textStyle, color: .textOnSolid)
-            .padding(.vertical, Spacing.padding_0_2_5)
-            .padding(.horizontal, horizontalSpacing)
-            .background(
-                RoundedRectangle(cornerRadius: Radius.radius_1)
-                    .fill(color)
-            )
+        HStack(spacing: Spacing.padding_0_2_5) {
+            if let iconName {
+                Image(systemName: iconName)
+                    .typography(textStyle, color: .textOnSolid)
+            }
+            Text(text)
+                .typography(textStyle, color: .textOnSolid)
+        }
+        .padding(.vertical, Spacing.padding_0_2_5)
+        .padding(.horizontal, horizontalSpacing)
+        .background(
+            RoundedRectangle(cornerRadius: Radius.radius_1)
+                .fill(color)
+        )
     }
 
     private var textStyle: Typography.Style {
@@ -58,9 +67,9 @@ extension PillDS {
         Spacer()
         HStack {
             Spacer()
-            PillDS(text: "FAIR MINT", style: .large)
-            PillDS(text: "FAIR MINT", style: .medium)
-            PillDS(text: "FAIR MINT", style: .small)
+            PillDS(text: "FAIR MINT", style: .large, iconName: "lock.fill")
+            PillDS(text: "FAIR MINT", style: .medium, iconName: "lock.fill")
+            PillDS(text: "FAIR MINT", style: .small, iconName: "lock.fill")
             Spacer()
         }
         HStack {

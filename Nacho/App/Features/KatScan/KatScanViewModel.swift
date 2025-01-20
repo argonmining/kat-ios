@@ -9,9 +9,11 @@ final class KatScanViewModel {
     var filteredTokens: [TokenDeployInfo] = []
     var selectedTokenViewModel: TokenDetailsViewModel? = nil
     var tickerGridViewModel: TickerGridViewModel? = nil
+    var addressInfoViewModel: AddressInfoViewModel? = nil
     var showDetails: Bool = false
     var showFilter: Bool = false
     var showMintMap: Bool = false
+    var showAddressInfo: Bool = false
     var isFiltering: Bool = false
     var filterState: TokensFilterState = .none
     var isEmpty: Bool = false
@@ -44,6 +46,22 @@ final class KatScanViewModel {
             }
         )
         showMintMap = true
+    }
+
+    func onShowAddressInfoAction() {
+        addressInfoViewModel = AddressInfoViewModel(networkService: networkService) { [weak self] ticker in
+            guard let self = self else { return }
+            self.showAddressInfo = false
+            if let tokenInfo = tokens?.filter({$0.tick == ticker}).first {
+                selectedTokenViewModel = TokenDetailsViewModel(
+                    tokenInfo: tokenInfo,
+                    networkService: self.networkService
+                )
+                self.showDetails = true
+            }
+            addressInfoViewModel = nil
+        }
+        showAddressInfo = true
     }
 
     func onFilterStateChange() {

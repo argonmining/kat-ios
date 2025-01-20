@@ -17,6 +17,7 @@
 "top_holders_text" = "Top Holders";
 "mint_progress_text" = "Mint Progress";
 "search_tokens_placeholder" = "Search tokens";
+"button_address_text" = "Address";
 
 // Welcome
 "welcome_title" = "Welcome to NACHO the Kat";
@@ -44,6 +45,11 @@
 // Mintint
 "mint_heatmap_title" = "Mint Heatmap";
 "mint_heatmap_button_text" = "Mint Map";
+
+// Address
+"address_info_title" = "Address Info";
+"address_info_text_input_placeholder" = "Address";
+"address_info_tokes_title" = "KRC20 Tokens";
 
 // Edge Cases
 "empty_tokens_text" = "No tokens match your request. Please try adjusting the filter or searching for a different token name.";

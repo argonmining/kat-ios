@@ -13,6 +13,7 @@ enum Localization {
     static let topHoldersText = "top_holders_text".localized
     static let mintProgressText = "mint_progress_text".localized
     static let searchTokensPlaceholder = "search_tokens_placeholder".localized
+    static let buttonAddressText = "button_address_text".localized
 
     // Welcome
     static let welcomeTitle = "welcome_title".localized
@@ -40,6 +41,11 @@ enum Localization {
     // Mintint
     static let mintHeatmapTitle = "mint_heatmap_title".localized
     static let mintHeatmapButtonText = "mint_heatmap_button_text".localized
+
+    // Address
+    static let addressInfoTitle = "address_info_title".localized
+    static let addressInfoTextInputPlaceholder = "address_info_text_input_placeholder".localized
+    static let addressInfoTokensTitle = "address_info_tokes_title".localized
 
     // Edge Cases
     static let emptyTokensText = "empty_tokens_text".localized
