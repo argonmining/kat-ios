@@ -45,7 +45,7 @@ struct TickerGridView: View {
                                 }
                                 .background(interpolatedColor(for: index))
                                 .onTapGesture {
-                                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                     viewModel.onTickerSelected(tick: ticker.tick)
                                 }
                             }

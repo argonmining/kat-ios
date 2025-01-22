@@ -71,7 +71,6 @@ struct AppSkeletonView: View {
                 .transition(.opacity)
             }
         }
-        
     }
 
     func slideOutSequentially() {

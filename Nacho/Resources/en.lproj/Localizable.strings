@@ -20,6 +20,7 @@
 "button_address_text" = "Address";
 "token_selection_title" = "Tokens";
 "button_compare" = "Compare";
+"address_copy_message" = "Address successfully copied to clipboard!";
 
 // Welcome
 "welcome_title" = "Welcome to NACHO the Kat";
@@ -57,6 +58,13 @@
 "compare_tokens_title" = "Compare tokens";
 "compare_tokens_button_select_1" = "Token 1";
 "compare_tokens_button_select_2" = "Token 2";
+
+// Kasplex
+"kasplex_info_button" = "Kasplex";
+"kasplex_info_title" = "KRC20 Statistics";
+"kasplex_info_total_transactions" = "Total Transactions";
+"kasplex_info_tokens_deployed" = "Tokens Deployed";
+"kasplex_info_fees_paid" = "Fees Paid";
 
 // Edge Cases
 "empty_tokens_text" = "No tokens match your request. Please try adjusting the filter or searching for a different token name.";

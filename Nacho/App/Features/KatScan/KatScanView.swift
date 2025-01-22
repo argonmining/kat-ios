@@ -94,6 +94,23 @@ struct KatScanView: View {
     private var buttons: some View {
         HStack(spacing: Spacing.padding_1) {
             IconButtonDS(
+                iconName: "chart.bar.xaxis.ascending",
+                text: Localization.kasplexInfoButton
+            ) {
+                viewModel.onShowKasplexInfoAction()
+            }
+            .sheet(isPresented: $viewModel.showKasplexInfo) {
+                if viewModel.kasplexInfoViewModel != nil {
+                    NavigationView {
+                        KasplexInfoView(viewModel: viewModel.kasplexInfoViewModel!)
+                    }
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                } else {
+                    EmptyView()
+                }
+            }
+            IconButtonDS(
                 iconName: "square.grid.3x3.fill",
                 text: Localization.mintHeatmapButtonText
             ) {
@@ -144,7 +161,6 @@ struct KatScanView: View {
                     EmptyView()
                 }
             }
-            Spacer()
         }
     }
 }

@@ -28,7 +28,7 @@ struct ButtonTemplate: View {
 
     var body: some View {
         Button(action: {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             action()
         }) {
             ZStack {

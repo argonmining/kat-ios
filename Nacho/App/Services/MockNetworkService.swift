@@ -156,4 +156,13 @@ final class MockNetworkService: NetworkServiceProvidable {
             balance: 453423423344
         )
     }
+
+    func fetchKasplexInfo() async throws -> KasplexInfo {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return .init(
+            opTotal: 109633496,
+            tokenTotal: 1861,
+            feeTotal: 127686124.74309599
+        )
+    }
 }

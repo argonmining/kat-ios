@@ -8,7 +8,7 @@ struct IconButtonDS: View {
 
     var body: some View {
         Button(action: {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             action()
         }) {
             VStack(spacing: Spacing.padding_0_5) {
@@ -17,8 +17,9 @@ struct IconButtonDS: View {
                     .frame(width: Size.iconSmall, height: Size.iconSmall)
                     .foregroundStyle(Color.textPrimary)
                 Text(text)
-                    .typography(.body1, color: .textPrimary)
+                    .typography(.body2, color: .textPrimary)
             }
+            .frame(maxWidth: .infinity)
         }
         .buttonStyle(IconButtonStyle())
     }
@@ -30,13 +31,13 @@ struct IconButtonStyle: ButtonStyle {
         configuration.label
             .toneStyle(configuration.isPressed ? .disabled : .idle)
             .padding(.vertical, Spacing.padding_1_5)
-            .padding(.horizontal, Spacing.padding_1_5)
+            .padding(.horizontal, Spacing.padding_1)
             .background(
-                RoundedRectangle(cornerRadius: Radius.radius_3)
+                RoundedRectangle(cornerRadius: Radius.radius_2)
                     .foregroundColor(.surfaceBackground)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: Radius.radius_3)
+                RoundedRectangle(cornerRadius: Radius.radius_2)
                     .stroke(.borderRegularPrimary, lineWidth: 2)
             )
             .contentShape(Rectangle())

@@ -16,6 +16,7 @@ enum Localization {
     static let buttonAddressText = "button_address_text".localized
     static let tokenSelectionTitle = "token_selection_title".localized
     static let buttonCompare = "button_compare".localized
+    static let addressCopyMessage = "address_copy_message".localized
 
     // Welcome
     static let welcomeTitle = "welcome_title".localized
@@ -53,6 +54,13 @@ enum Localization {
     static let compareTokensTitle = "compare_tokens_title".localized
     static let compareTokensButtonSelect1 = "compare_tokens_button_select_1".localized
     static let compareTokensButtonSelect2 = "compare_tokens_button_select_2".localized
+
+    // Kasplex
+    static let kasplexInfoButton = "kasplex_info_button".localized
+    static let kasplexInfoTitle = "kasplex_info_title".localized
+    static let kasplexInfoTotalTransactions = "kasplex_info_total_transactions".localized
+    static let kasplexInfoTokensDeployed = "kasplex_info_tokens_deployed".localized
+    static let kasplexInfoFeesPaid = "kasplex_info_fees_paid".localized
 
     // Edge Cases
     static let emptyTokensText = "empty_tokens_text".localized

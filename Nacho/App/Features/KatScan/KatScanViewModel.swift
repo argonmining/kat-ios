@@ -11,11 +11,13 @@ final class KatScanViewModel {
     var tickerGridViewModel: TickerGridViewModel? = nil
     var addressInfoViewModel: AddressInfoViewModel? = nil
     var compareTokensViewModel: CompareTokensViewModel? = nil
+    var kasplexInfoViewModel: KasplexInfoViewModel? = nil
     var showDetails: Bool = false
     var showFilter: Bool = false
     var showMintMap: Bool = false
     var showAddressInfo: Bool = false
     var showCompareTokens: Bool = false
+    var showKasplexInfo: Bool = false
     var isFiltering: Bool = false
     var filterState: TokensFilterState = .none
     var isEmpty: Bool = false
@@ -73,6 +75,11 @@ final class KatScanViewModel {
         }
         compareTokensViewModel = CompareTokensViewModel(tokensInfo: tokens!, networkService: networkService)
         showCompareTokens = true
+    }
+
+    func onShowKasplexInfoAction() {
+        kasplexInfoViewModel = KasplexInfoViewModel(networkService: networkService)
+        showKasplexInfo = true
     }
 
     func onFilterStateChange() {

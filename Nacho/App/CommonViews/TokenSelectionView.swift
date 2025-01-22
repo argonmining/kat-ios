@@ -38,7 +38,7 @@ struct TokenSelectionView: View {
                             ForEach(filteredTokens, id: \.self) { token in
                                 item(text: token, isSelected: (selectedToken ?? "") == token)
                                     .onTapGesture {
-                                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                         onSelectedAction(token)
                                     }
                             }

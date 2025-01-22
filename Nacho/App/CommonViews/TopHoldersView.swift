@@ -25,6 +25,11 @@ struct TopHoldersView: View {
                             style: .medium,
                             color: .accentColor.opacity(0.7)
                         )
+                        .onTapGesture {
+                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            UIPasteboard.general.string = holder.address
+                            Notifications.presentTopMessage(Localization.addressCopyMessage)
+                        }
                         Spacer()
                         Text(Formatter.formatToNumber(value: holder.amount))
                             .typography(.body1)

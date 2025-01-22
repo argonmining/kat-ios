@@ -37,7 +37,7 @@ struct TextInputDS: View {
                 .focused($isFocused)
             if isButtonShowing && actionIcon != nil {
                 Button(action: {
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     action?()
                 }) {
                     Image(systemName: actionIcon!)

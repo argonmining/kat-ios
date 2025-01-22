@@ -240,7 +240,7 @@ struct CompareTokensView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .onTapGesture {
-                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                         viewModel.isFirstToken = true
                         viewModel.showTokenSelection = true
                     }
@@ -263,7 +263,7 @@ struct CompareTokensView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .onTapGesture {
-                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                         viewModel.isFirstToken = false
                         viewModel.showTokenSelection = true
                     }

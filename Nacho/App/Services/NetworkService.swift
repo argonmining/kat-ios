@@ -11,6 +11,7 @@ protocol NetworkServiceProvidable: AnyObject {
     func fetchMintHeatmapForWeek() async throws -> [MintInfo]
     func fetchAddressTokenList(address: String) async throws -> [AddressTokenInfo]
     func fetchAddressBalance(address: String) async throws -> AddressBalance
+    func fetchKasplexInfo() async throws -> KasplexInfo
 }
 
 // NetworkService implementation
@@ -146,6 +147,20 @@ final class NetworkService: NetworkServiceProvidable {
             throw NetworkError.somethingWentWrong
         }
     }
+
+    func fetchKasplexInfo() async throws -> KasplexInfo {
+        let dataTask = AF.request(kasplexBaseURL + Endpoint.kasplexInfo.value)
+            .validate()
+            .serializingDecodable(ResponseWrapper<KasplexInfo>.self)
+
+        do {
+            let response = try await dataTask.value
+            return response.result
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
 }
 
 private extension NetworkService {
@@ -159,6 +174,7 @@ private extension NetworkService {
         case tokensMintTotal
         case addressTokenList(String)
         case addressBalance(String)
+        case kasplexInfo
 
         var value: String {
             switch self {
@@ -168,8 +184,9 @@ private extension NetworkService {
             case .tokenChart(let ticker): return "/token/krc20/\(ticker)/charts?type=candles&interval=1d"
             case .tokenInfoNoChart(let ticker): return "/token/krc20/\(ticker)/info?includeCharts=false"
             case .tokensMintTotal: return "/minting/mint-totals"
-            case .addressTokenList(let address): return "/address/\(address)/tokenlist"
+            case .addressTokenList(let address): return "/krc20/address/\(address)/tokenlist"
             case .addressBalance(let address): return "/addresses/\(address)/balance"
+            case .kasplexInfo: return "/info"
             }
         }
     }
