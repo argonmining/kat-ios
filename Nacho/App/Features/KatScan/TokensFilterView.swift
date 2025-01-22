@@ -36,7 +36,7 @@ struct TokensFilterView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: Radius.radius_3)
-                .stroke(.surfaceForeground, lineWidth: 2)
+                .stroke(isSelected ? .surfaceAccent : .surfaceForeground, lineWidth: 1)
         )
     }
 }

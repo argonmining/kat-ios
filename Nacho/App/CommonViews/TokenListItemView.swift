@@ -1,4 +1,3 @@
-import CachedAsyncImage
 import SwiftUI
 
 struct TokenListItemView: View {
@@ -9,7 +8,7 @@ struct TokenListItemView: View {
         WidgetDS {
             VStack(alignment: .leading, spacing: Spacing.padding_1_5) {
                 HStack(spacing: Spacing.padding_1) {
-                    asyncImage
+                    TokenImage(tokenInfo.tick)
                     VStack(alignment: .leading, spacing: Spacing.padding_0_2_5) {
                         Text(tokenInfo.tick).typography(.body1)
                         Text(Formatter.formatDate(value: tokenInfo.releaseTimeInterval)).typography(.caption2)
@@ -65,46 +64,6 @@ struct TokenListItemView: View {
         } else {
             PillDS(text: Localization.fairMint)
         }
-    }
-
-    private var asyncImage: some View {
-        CachedAsyncImage(
-            url: URL(string: tokenInfo.logoPath),
-            urlCache: .imageCache
-        ) { phase in
-            switch phase {
-            case .empty:
-                imagePlaceholder
-            case .success(let image):
-                image
-                    .resizable()
-                    .frame(width: Size.iconMedium, height: Size.iconMedium)
-                    .clipShape(Circle())
-            case .failure:
-                imagePlaceholder
-            @unknown default:
-                imagePlaceholder
-            }
-        }
-    }
-
-    private var imageLoading: some View {
-        ZStack {
-            Color.surfaceBackground
-            ProgressView()
-        }
-        .frame(width: Size.iconMedium, height: Size.iconMedium)
-        .clipShape(Circle())
-    }
-
-    private var imagePlaceholder: some View {
-        ZStack {
-            Color.surfaceBackground
-            Image(systemName: "photo")
-                .foregroundStyle(Color.textSecondary)
-        }
-        .frame(width: Size.iconMedium, height: Size.iconMedium)
-        .clipShape(Circle())
     }
 
     private var segmentedBar: some View {

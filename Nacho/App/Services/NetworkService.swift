@@ -63,6 +63,7 @@ final class NetworkService: NetworkServiceProvidable {
             let response = try await dataTask.value
             return response
         } catch {
+            print(error)
             throw NetworkError.somethingWentWrong
         }
     }

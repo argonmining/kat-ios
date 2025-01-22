@@ -4,6 +4,7 @@ import Charts
 struct LineChartDS: View {
 
     @Binding var tradeData: [ChartTradeItem]?
+    let showVerticalLabels: Bool
     @State private var minValue: Double = 0
     @State private var maxValue: Double = 0
     @State private var delta: Double = 0
@@ -47,14 +48,16 @@ struct LineChartDS: View {
                     }
                 }
                 .chartYAxis {
-                    AxisMarks(values: .automatic) { value in
-                        if let priceValue = value.as(Double.self) {
-                            AxisValueLabel {
-                                Text(String(format: "%.8f", priceValue))
+                    if showVerticalLabels {
+                        AxisMarks(values: .automatic) { value in
+                            if let priceValue = value.as(Double.self) {
+                                AxisValueLabel {
+                                    Text(String(format: "%.8f", priceValue))
+                                }
                             }
+                            AxisTick()
+                            AxisGridLine()
                         }
-                        AxisTick()
-                        AxisGridLine()
                     }
                 }
                 .chartYScale(domain: minValue-delta...maxValue+delta)
@@ -67,6 +70,12 @@ struct LineChartDS: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            guard let tradeData else { return }
+            minValue = tradeData.min(by: { $0.value < $1.value })?.value ?? 0
+            maxValue = tradeData.max(by: { $0.value < $1.value })?.value ?? 0
+            delta = (maxValue - minValue) / 3
         }
         .onChange(of: tradeData) { _, newValue in
             guard let newValue else { return }
@@ -83,5 +92,5 @@ struct LineChartDS: View {
         ChartTradeItem(timestamp: 1673503600, value: 0.00008629),
         ChartTradeItem(timestamp: 1673507200, value: 0.00008757),
         ChartTradeItem(timestamp: 1673510800, value: 0.00008739)
-    ]))
+    ]), showVerticalLabels: true)
 }

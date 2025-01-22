@@ -83,7 +83,7 @@ struct AddressInfoView: View {
                         .typography(.headline3, color: .textSecondary)
                     ForEach(tokens, id: \.self) { token in
                         HStack {
-                            asyncImage(token.ticker)
+                            TokenImage(token.ticker)
                             Text(token.ticker).typography(.body1)
                             Spacer()
                             if token.locked > 0 {
@@ -110,7 +110,7 @@ struct AddressInfoView: View {
                         .typography(.headline3, color: .textSecondary)
                     ForEach(0...4, id: \.self) { _ in
                         HStack {
-                            imagePlaceholder
+                            TokenImage("")
                                 .shimmer(isActive: true)
                             Text("NACHO")
                                 .typography(.body1)
@@ -124,37 +124,6 @@ struct AddressInfoView: View {
                 }
             }
         }
-    }
-
-    private func asyncImage(_ token: String) -> some View {
-        CachedAsyncImage(
-            url: URL(string: Constants.logoUrl + token),
-            urlCache: .imageCache
-        ) { phase in
-            switch phase {
-            case .empty:
-                imagePlaceholder
-            case .success(let image):
-                image
-                    .resizable()
-                    .frame(width: Size.iconMedium, height: Size.iconMedium)
-                    .clipShape(Circle())
-            case .failure:
-                imagePlaceholder
-            @unknown default:
-                imagePlaceholder
-            }
-        }
-    }
-
-    private var imagePlaceholder: some View {
-        ZStack {
-            Color.surfaceBackground
-            Image(systemName: "photo")
-                .foregroundStyle(Color.textSecondary)
-        }
-        .frame(width: Size.iconMedium, height: Size.iconMedium)
-        .clipShape(Circle())
     }
 }
 

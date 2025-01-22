@@ -14,6 +14,8 @@ enum Localization {
     static let mintProgressText = "mint_progress_text".localized
     static let searchTokensPlaceholder = "search_tokens_placeholder".localized
     static let buttonAddressText = "button_address_text".localized
+    static let tokenSelectionTitle = "token_selection_title".localized
+    static let buttonCompare = "button_compare".localized
 
     // Welcome
     static let welcomeTitle = "welcome_title".localized
@@ -47,8 +49,14 @@ enum Localization {
     static let addressInfoTextInputPlaceholder = "address_info_text_input_placeholder".localized
     static let addressInfoTokensTitle = "address_info_tokes_title".localized
 
+    // Compare tokens
+    static let compareTokensTitle = "compare_tokens_title".localized
+    static let compareTokensButtonSelect1 = "compare_tokens_button_select_1".localized
+    static let compareTokensButtonSelect2 = "compare_tokens_button_select_2".localized
+
     // Edge Cases
     static let emptyTokensText = "empty_tokens_text".localized
+    static let emptyTokensSelectionText = "empty_tokens_selection_text".localized
     static let emptyViewText = "empty_view_text".localized
 }
 

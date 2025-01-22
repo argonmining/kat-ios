@@ -13,7 +13,7 @@ struct PriceChartWidgetView: View {
             VStack(alignment: .leading, spacing: Spacing.padding_1) {
                 Text(Localization.widgetChartTitle)
                     .typography(.headline3, color: .textSecondary)
-                LineChartDS(tradeData: $tradeData)
+                LineChartDS(tradeData: $tradeData, showVerticalLabels: true)
                     .frame(maxWidth: .infinity)
                     .frame(height: 200)
             }

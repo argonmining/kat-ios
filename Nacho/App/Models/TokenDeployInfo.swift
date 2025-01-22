@@ -73,17 +73,20 @@ struct TokenDeployInfo: Decodable, Hashable {
         }
 
         func parseValue(_ key: CodingKeys) throws -> Double {
-            guard
+            if let doubleValue = try? container.decode(Double.self, forKey: key) {
+                return doubleValue / pow(10.0, Double(decimal))
+            } else if
                 let stringValue = try? container.decode(String.self, forKey: key),
                 let doubleValue = Double(stringValue)
-            else {
+            {
+                return doubleValue / pow(10.0, Double(decimal))
+            } else {
                 throw DecodingError.dataCorruptedError(
                     forKey: key,
                     in: container,
                     debugDescription: "Invalid numeric value"
                 )
             }
-            return doubleValue / pow(10.0, Double(decimal))
         }
 
         maxSupply = try parseValue(.max)
@@ -101,17 +104,20 @@ struct TokenDeployInfo: Decodable, Hashable {
             logoPath = pathStringValue
         }
 
-        guard
+        if let timeInterval = try? container.decode(Double.self, forKey: .mtsAdd) {
+            releaseTimeInterval = timeInterval / 1000
+        } else if
             let stringValue = try? container.decode(String.self, forKey: .mtsAdd),
-            let timeInterval = TimeInterval(stringValue)
-        else {
+            let timeInterval = Double(stringValue)
+        {
+            releaseTimeInterval = timeInterval / 1000
+        } else {
             throw DecodingError.dataCorruptedError(
                 forKey: .mtsAdd,
                 in: container,
-                debugDescription: "Invalid numeric value"
+                debugDescription: "Invalid Time Interval Format"
             )
         }
-        releaseTimeInterval = timeInterval / 1000
         holders = (try? container.decode([HolderInfo].self, forKey: .holder)) ?? []
     }
 }

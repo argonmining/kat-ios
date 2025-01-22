@@ -36,4 +36,8 @@ struct Formatter {
         formatter.locale = Locale.current
         return formatter.string(from: date)
     }
+
+    static func formatPercentage(value: Double, decimal: Int = 0) -> String {
+        return String(format: "%.\(decimal)f%%", value)
+    }
 }

@@ -1,4 +1,3 @@
-import CachedAsyncImage
 import SwiftUI
 
 struct TokenDetailsView: View {
@@ -39,7 +38,7 @@ struct TokenDetailsView: View {
         VStack(alignment: .leading, spacing: Spacing.padding_2) {
 
             HStack(spacing: Spacing.padding_1_5) {
-                asyncImage
+                TokenImage(viewModel.tokenInfo.tick)
                 Spacer()
                 launchPill
             }
@@ -54,7 +53,7 @@ struct TokenDetailsView: View {
                     PillDS(text: changeString, style: .large, color: changeColor)
                         .shimmer(isActive: viewModel.tokenPriceData == nil)
                 }
-                LineChartDS(tradeData: $viewModel.chartData)
+                LineChartDS(tradeData: $viewModel.chartData, showVerticalLabels: true)
                     .frame(maxWidth: .infinity)
                     .frame(height: 200)
                     .padding(.bottom, Spacing.padding_1)
@@ -141,37 +140,6 @@ struct TokenDetailsView: View {
         }
     }
 
-    private var asyncImage: some View {
-        CachedAsyncImage(
-            url: URL(string: viewModel.tokenInfo.logoPath),
-            urlCache: .imageCache
-        ) { phase in
-            switch phase {
-            case .empty:
-                imagePlaceholder
-            case .success(let image):
-                image
-                    .resizable()
-                    .frame(width: Size.iconMedium, height: Size.iconMedium)
-                    .clipShape(Circle())
-            case .failure:
-                imagePlaceholder
-            @unknown default:
-                imagePlaceholder
-            }
-        }
-    }
-
-    private var imagePlaceholder: some View {
-        ZStack {
-            Color.surfaceBackground
-            Image(systemName: "photo")
-                .foregroundStyle(Color.textSecondary)
-        }
-        .frame(width: Size.iconMedium, height: Size.iconMedium)
-        .clipShape(Circle())
-    }
-
     private var launchPill: some View {
         if viewModel.tokenInfo.preMinted > 0 {
             PillDS(text: Localization.preMint, style: .large, color: .solidWarning)
@@ -207,7 +175,7 @@ struct TokenDetailsView: View {
     }
 
     private var changeString: String {
-        String(format: "%.0f%%", viewModel.tokenPriceData?.change ?? 0)
+        Formatter.formatPercentage(value: viewModel.tokenPriceData?.change ?? 0)
     }
 
     private var volumeString: String {

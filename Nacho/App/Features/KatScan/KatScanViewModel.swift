@@ -10,10 +10,12 @@ final class KatScanViewModel {
     var selectedTokenViewModel: TokenDetailsViewModel? = nil
     var tickerGridViewModel: TickerGridViewModel? = nil
     var addressInfoViewModel: AddressInfoViewModel? = nil
+    var compareTokensViewModel: CompareTokensViewModel? = nil
     var showDetails: Bool = false
     var showFilter: Bool = false
     var showMintMap: Bool = false
     var showAddressInfo: Bool = false
+    var showCompareTokens: Bool = false
     var isFiltering: Bool = false
     var filterState: TokensFilterState = .none
     var isEmpty: Bool = false
@@ -62,6 +64,15 @@ final class KatScanViewModel {
             addressInfoViewModel = nil
         }
         showAddressInfo = true
+    }
+
+    func onShowCompareTokensAction() {
+        guard tokens != nil else {
+            // TODO: Show "Tokens are not ready yet" Message
+            return
+        }
+        compareTokensViewModel = CompareTokensViewModel(tokensInfo: tokens!, networkService: networkService)
+        showCompareTokens = true
     }
 
     func onFilterStateChange() {

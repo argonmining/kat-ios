@@ -127,6 +127,23 @@ struct KatScanView: View {
                     EmptyView()
                 }
             }
+            IconButtonDS(
+                iconName: "arrow.up.arrow.down.square",
+                text: Localization.buttonCompare
+            ) {
+                viewModel.onShowCompareTokensAction()
+            }
+            .sheet(isPresented: $viewModel.showCompareTokens) {
+                if viewModel.compareTokensViewModel != nil {
+                    NavigationView {
+                        CompareTokensView(viewModel: viewModel.compareTokensViewModel!)
+                    }
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                } else {
+                    EmptyView()
+                }
+            }
             Spacer()
         }
     }

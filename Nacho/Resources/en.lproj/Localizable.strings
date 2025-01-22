@@ -18,6 +18,8 @@
 "mint_progress_text" = "Mint Progress";
 "search_tokens_placeholder" = "Search tokens";
 "button_address_text" = "Address";
+"token_selection_title" = "Tokens";
+"button_compare" = "Compare";
 
 // Welcome
 "welcome_title" = "Welcome to NACHO the Kat";
@@ -51,6 +53,12 @@
 "address_info_text_input_placeholder" = "Address";
 "address_info_tokes_title" = "KRC20 Tokens";
 
+// Compare tokens
+"compare_tokens_title" = "Compare tokens";
+"compare_tokens_button_select_1" = "Token 1";
+"compare_tokens_button_select_2" = "Token 2";
+
 // Edge Cases
 "empty_tokens_text" = "No tokens match your request. Please try adjusting the filter or searching for a different token name.";
+"empty_tokens_selection_text" = "No tokens match your request. Please try searching for a different token name.";
 "empty_view_text" = "Nothing to show :(";
