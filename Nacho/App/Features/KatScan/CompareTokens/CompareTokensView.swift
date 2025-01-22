@@ -9,143 +9,225 @@ struct CompareTokensView: View {
             VStack(spacing: Spacing.padding_2) {
                 tokenSelectionWidget
                 if viewModel.token1 != nil && viewModel.token2 != nil && !viewModel.isLoading() {
-                    WidgetDS {
-                        VStack(spacing: .zero) {
-                            HStack {
-                                Text(Localization.holdersText)
-                                    .typography(.headline3, color: .textSecondary)
-                                Spacer()
-                            }
-                            HStack {
-                                Text(viewModel.token1Holders())
-                                    .typography(.numeric3)
-                                    .lineLimit(1)
-                                Spacer()
-                                Text(viewModel.token2Holders())
-                                    .typography(.numeric3)
-                                    .lineLimit(1)
-                            }
-                            .padding(.top, Spacing.padding_2)
-                        }
-                    }
-                    if
-                        let tokenPriceData1 = viewModel.tokenPriceData1,
-                        let tokenPriceData2 = viewModel.tokenPriceData2
-                    {
-                        WidgetDS {
-                            VStack(spacing: .zero) {
-                                HStack {
-                                    Text(Localization.widgetPriceTitle)
-                                        .typography(.headline3, color: .textSecondary)
-                                    Spacer()
-                                }
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text("$\(Formatter.formatToNumber(value: tokenPriceData1.price, decimal: 8))")
-                                            .typography(.numeric3)
-                                            .lineLimit(1)
-                                        PillDS(
-                                            text: Formatter.formatPercentage(value: tokenPriceData1.change, decimal: 2),
-                                            style: .medium,
-                                            color: tokenPriceData1.change >= 0 ? .solidSuccess : .solidDanger
-                                        )
-                                    }
-                                    Spacer()
-                                    VStack(alignment: .trailing) {
-                                        Text("$\(Formatter.formatToNumber(value: tokenPriceData2.price, decimal: 8))")
-                                            .typography(.numeric3)
-                                            .lineLimit(1)
-                                        PillDS(
-                                            text: Formatter.formatPercentage(value: tokenPriceData2.change, decimal: 2),
-                                            style: .medium,
-                                            color: tokenPriceData2.change >= 0 ? .solidSuccess : .solidDanger
-                                        )
-                                    }
-                                }
-                                .padding(.top, Spacing.padding_2)
-
-                                HStack {
-                                    Text(Localization.widgetChartTitle)
-                                        .typography(.headline3, color: .textSecondary)
-                                    Spacer()
-                                }
-                                .padding(.top, Spacing.padding_2)
-                                HStack {
-                                    LineChartDS(tradeData: $viewModel.chartData1, showVerticalLabels: false)
-                                        .frame(maxWidth: .infinity)
-                                        .frame(height: 100)
-                                    Spacer()
-                                        .frame(width: Spacing.padding_2)
-                                    LineChartDS(tradeData: $viewModel.chartData2, showVerticalLabels: false)
-                                        .frame(maxWidth: .infinity)
-                                        .frame(height: 100)
-                                }
-                                .padding(.top, Spacing.padding_2)
-
-                                HStack {
-                                    Text(Localization.widgetMCTitle)
-                                        .typography(.headline3, color: .textSecondary)
-                                    Spacer()
-                                }
-                                .padding(.top, Spacing.padding_2)
-                                HStack {
-                                    Text(Formatter.formatToUSD(value: tokenPriceData1.marketCap))
-                                        .typography(.body1)
-                                        .lineLimit(1)
-                                    Spacer()
-                                    Text(Formatter.formatToUSD(value: tokenPriceData2.marketCap))
-                                        .typography(.body1)
-                                        .lineLimit(1)
-                                }
-                                .padding(.top, Spacing.padding_2)
-
-                                HStack {
-                                    Text(Localization.widgetVolumeTitle)
-                                        .typography(.headline3, color: .textSecondary)
-                                    Spacer()
-                                }
-                                .padding(.top, Spacing.padding_2)
-                                HStack {
-                                    Text(Formatter.formatToUSD(value: tokenPriceData1.volume))
-                                        .typography(.body1)
-                                        .lineLimit(1)
-                                    Spacer()
-                                    Text(Formatter.formatToUSD(value: tokenPriceData2.volume))
-                                        .typography(.body1)
-                                        .lineLimit(1)
-                                }
-                                .padding(.top, Spacing.padding_2)
-                            }
-                        }
-                    }
+                    tokenInfoWidget
+                    priceWidget
                 } else if viewModel.isLoading() {
-                    WidgetDS {
-                        VStack {
-                            HStack {
-                                Text(Localization.holdersText)
-                                    .typography(.headline3, color: .textSecondary)
-                                    .shimmer(isActive: true)
-                                Spacer()
-                            }
-                            HStack {
-                                Text("9999999")
-                                    .typography(.numeric3)
-                                    .lineLimit(1)
-                                    .shimmer(isActive: true)
-                                Spacer()
-                                Text("99999999999")
-                                    .typography(.numeric3)
-                                    .lineLimit(1)
-                                    .shimmer(isActive: true)
-                            }
-                        }
-                    }
+                    loadingWidget
                 }
             }
             .padding(Spacing.padding_2)
         }
         .background(Color.surfaceBackground.ignoresSafeArea())
         .navigationTitle(Localization.compareTokensTitle)
+    }
+
+    private var tokenInfoWidget: some View {
+        WidgetDS {
+            VStack(spacing: .zero) {
+                HStack {
+                    Text(Localization.holdersText)
+                        .typography(.headline3, color: .textSecondary)
+                    Spacer()
+                }
+                HStack {
+                    Text(viewModel.token1Holders())
+                        .typography(.numeric3)
+                        .lineLimit(1)
+                    Spacer()
+                    Text(viewModel.token2Holders())
+                        .typography(.numeric3)
+                        .lineLimit(1)
+                }
+                .padding(.top, Spacing.padding_1)
+
+                HStack {
+                    Text(Localization.widgetSupply)
+                        .typography(.headline3, color: .textSecondary)
+                    Spacer()
+                }
+                .padding(.top, Spacing.padding_2)
+                HStack {
+                    Text(viewModel.token1Supply())
+                        .typography(.numeric4)
+                        .lineLimit(1)
+                    Spacer()
+                    Text(viewModel.token2Supply())
+                        .typography(.numeric4)
+                        .lineLimit(1)
+                }
+                .padding(.top, Spacing.padding_1)
+
+                HStack {
+                    Text(Localization.premintedText)
+                        .typography(.headline3, color: .textSecondary)
+                    Spacer()
+                }
+                .padding(.top, Spacing.padding_2)
+                HStack {
+                    if let preminted = viewModel.token1Preminted() {
+                        VStack(alignment: .leading) {
+                            Text(preminted.1)
+                                .typography(.numeric4)
+                                .lineLimit(1)
+                            PillDS(
+                                text: preminted.0 ? Localization.fairMint : Localization.preMint,
+                                style: .medium,
+                                color: preminted.0 ? .solidSuccess : .solidWarning
+                            )
+                        }
+                    }
+                    Spacer()
+                    if let preminted = viewModel.token2Preminted() {
+                        VStack(alignment: .trailing) {
+                            Text(preminted.1)
+                                .typography(.numeric4)
+                                .lineLimit(1)
+                            PillDS(
+                                text: preminted.0 ? Localization.fairMint : Localization.preMint,
+                                style: .medium,
+                                color: preminted.0 ? .solidSuccess : .solidWarning
+                            )
+                        }
+                    }
+                }
+                .padding(.top, Spacing.padding_1)
+
+                HStack {
+                    Text(Localization.mintedText)
+                        .typography(.headline3, color: .textSecondary)
+                    Spacer()
+                }
+                .padding(.top, Spacing.padding_2)
+                HStack {
+                    Text(viewModel.token1Minted())
+                        .typography(.numeric4)
+                        .lineLimit(1)
+                    Spacer()
+                    Text(viewModel.token2Minted())
+                        .typography(.numeric4)
+                        .lineLimit(1)
+                }
+                .padding(.top, Spacing.padding_1)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var priceWidget: some View {
+        if
+            let tokenPriceData1 = viewModel.tokenPriceData1,
+            let tokenPriceData2 = viewModel.tokenPriceData2
+        {
+            WidgetDS {
+                VStack(spacing: .zero) {
+                    HStack {
+                        Text(Localization.widgetPriceTitle)
+                            .typography(.headline3, color: .textSecondary)
+                        Spacer()
+                    }
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("$\(Formatter.formatToNumber(value: tokenPriceData1.price, decimal: 8))")
+                                .typography(.numeric3)
+                                .lineLimit(1)
+                            PillDS(
+                                text: Formatter.formatPercentage(value: tokenPriceData1.change, decimal: 2),
+                                style: .medium,
+                                color: tokenPriceData1.change >= 0 ? .solidSuccess : .solidDanger
+                            )
+                        }
+                        Spacer()
+                        VStack(alignment: .trailing) {
+                            Text("$\(Formatter.formatToNumber(value: tokenPriceData2.price, decimal: 8))")
+                                .typography(.numeric3)
+                                .lineLimit(1)
+                            PillDS(
+                                text: Formatter.formatPercentage(value: tokenPriceData2.change, decimal: 2),
+                                style: .medium,
+                                color: tokenPriceData2.change >= 0 ? .solidSuccess : .solidDanger
+                            )
+                        }
+                    }
+                    .padding(.top, Spacing.padding_1)
+                    
+                    HStack {
+                        Text(Localization.widgetChartTitle)
+                            .typography(.headline3, color: .textSecondary)
+                        Spacer()
+                    }
+                    .padding(.top, Spacing.padding_2)
+                    HStack {
+                        LineChartDS(tradeData: $viewModel.chartData1, showVerticalLabels: false)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 100)
+                        Spacer()
+                            .frame(width: Spacing.padding_2)
+                        LineChartDS(tradeData: $viewModel.chartData2, showVerticalLabels: false)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 100)
+                    }
+                    .padding(.top, Spacing.padding_1)
+                    
+                    HStack {
+                        Text(Localization.widgetMCTitle)
+                            .typography(.headline3, color: .textSecondary)
+                        Spacer()
+                    }
+                    .padding(.top, Spacing.padding_2)
+                    HStack {
+                        Text(Formatter.formatToUSD(value: tokenPriceData1.marketCap, decimal: 0))
+                            .typography(.numeric4)
+                            .lineLimit(1)
+                        Spacer()
+                        Text(Formatter.formatToUSD(value: tokenPriceData2.marketCap, decimal: 0))
+                            .typography(.numeric4)
+                            .lineLimit(1)
+                    }
+                    .padding(.top, Spacing.padding_1)
+                    
+                    HStack {
+                        Text(Localization.widgetVolumeTitle)
+                            .typography(.headline3, color: .textSecondary)
+                        Spacer()
+                    }
+                    .padding(.top, Spacing.padding_2)
+                    HStack {
+                        Text(Formatter.formatToUSD(value: tokenPriceData1.volume, decimal: 0))
+                            .typography(.numeric4)
+                            .lineLimit(1)
+                        Spacer()
+                        Text(Formatter.formatToUSD(value: tokenPriceData2.volume, decimal: 0))
+                            .typography(.numeric4)
+                            .lineLimit(1)
+                    }
+                    .padding(.top, Spacing.padding_1)
+                }
+            }
+        }
+    }
+
+    private var loadingWidget: some View {
+        WidgetDS {
+            VStack {
+                HStack {
+                    Text(Localization.holdersText)
+                        .typography(.headline3, color: .textSecondary)
+                        .shimmer(isActive: true)
+                    Spacer()
+                }
+                HStack {
+                    Text("9999999")
+                        .typography(.numeric3)
+                        .lineLimit(1)
+                        .shimmer(isActive: true)
+                    Spacer()
+                    Text("99999999999")
+                        .typography(.numeric3)
+                        .lineLimit(1)
+                        .shimmer(isActive: true)
+                }
+            }
+        }
     }
 
     private var tokenSelectionWidget: some View {
@@ -158,6 +240,7 @@ struct CompareTokensView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .onTapGesture {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         viewModel.isFirstToken = true
                         viewModel.showTokenSelection = true
                     }
@@ -180,6 +263,7 @@ struct CompareTokensView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .onTapGesture {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         viewModel.isFirstToken = false
                         viewModel.showTokenSelection = true
                     }

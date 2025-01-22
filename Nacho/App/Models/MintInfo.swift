@@ -1,7 +1,6 @@
 import Foundation
 
-struct MintInfo: Decodable, Identifiable {
-    let id: UUID = UUID()
+struct MintInfo: Decodable {
     let tick: String
     let mintTotal: Double
 }

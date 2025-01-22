@@ -2,11 +2,11 @@ import Foundation
 
 struct Formatter {
 
-    static func formatToUSD(value: Double) -> String {
+    static func formatToUSD(value: Double, decimal: Int = 2) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = "USD"
-        formatter.maximumFractionDigits = 2
+        formatter.maximumFractionDigits = decimal
         formatter.locale = Locale(identifier: "en_US")
         return formatter.string(from: NSNumber(value: value)) ?? ""
     }

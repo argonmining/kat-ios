@@ -42,6 +42,54 @@ final class CompareTokensViewModel {
         return Formatter.formatToNumber(value: holders)
     }
 
+    func token1Preminted() -> (Bool, String)? {
+        guard let token1 else { return nil }
+        guard let preMinted = tokensInfo.filter({ $0.tick == token1 }).first?.preMinted else {
+            return nil
+        }
+        return (preMinted == 0, Formatter.formatToNumber(value: preMinted))
+    }
+
+    func token2Preminted() -> (Bool, String)? {
+        guard let token2 else { return nil }
+        guard let preMinted = tokensInfo.filter({ $0.tick == token2 }).first?.preMinted else {
+            return nil
+        }
+        return (preMinted == 0, Formatter.formatToNumber(value: preMinted))
+    }
+
+    func token1Supply() -> String {
+        guard let token1 else { return "-" }
+        guard let supply = tokensInfo.filter({ $0.tick == token1 }).first?.maxSupply else {
+            return "-"
+        }
+        return Formatter.formatToNumber(value: supply)
+    }
+
+    func token2Supply() -> String {
+        guard let token2 else { return "-" }
+        guard let supply = tokensInfo.filter({ $0.tick == token2 }).first?.maxSupply else {
+            return "-"
+        }
+        return Formatter.formatToNumber(value: supply)
+    }
+
+    func token1Minted() -> String {
+        guard let token1 else { return "-" }
+        guard let minted = tokensInfo.filter({ $0.tick == token1 }).first?.minted else {
+            return "-"
+        }
+        return Formatter.formatToNumber(value: minted)
+    }
+
+    func token2Minted() -> String {
+        guard let token2 else { return "-" }
+        guard let minted = tokensInfo.filter({ $0.tick == token2 }).first?.minted else {
+            return "-"
+        }
+        return Formatter.formatToNumber(value: minted)
+    }
+
     func isLoading() -> Bool {
         return token1Loading || token2Loading
     }
@@ -68,7 +116,6 @@ final class CompareTokensViewModel {
             await MainActor.run {
                 self.tokenPriceData1 = TokenPriceData(fromTokenInfoResponse: result.0)
                 self.chartData1 = result.1.candles
-//                print("ChartData1: \(self.chartData1!)")
                 token1Loading = false
             }
         } catch {
@@ -89,7 +136,6 @@ final class CompareTokensViewModel {
             await MainActor.run {
                 self.tokenPriceData2 = TokenPriceData(fromTokenInfoResponse: result.0)
                 self.chartData2 = result.1.candles
-//                print("ChartData2: \(self.chartData2!)")
                 token2Loading = false
             }
         } catch {
