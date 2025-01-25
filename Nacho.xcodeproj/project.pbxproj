@@ -10,6 +10,7 @@
 		FB38729A2D329F8F006AF06F /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = FB3872992D329F8F006AF06F /* Alamofire */; };
 		FB6DC2632D3AEF3E00A39DB3 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = FB6DC2622D3AEF3E00A39DB3 /* CachedAsyncImage */; };
 		FBC660482D4186C0008341B1 /* SwiftEntryKit in Frameworks */ = {isa = PBXBuildFile; productRef = FBC660472D4186C0008341B1 /* SwiftEntryKit */; };
+		FBC6604E2D421342008341B1 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = FBC6604D2D421342008341B1 /* Vortex */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 			files = (
 				FB38729A2D329F8F006AF06F /* Alamofire in Frameworks */,
 				FB6DC2632D3AEF3E00A39DB3 /* CachedAsyncImage in Frameworks */,
+				FBC6604E2D421342008341B1 /* Vortex in Frameworks */,
 				FBC660482D4186C0008341B1 /* SwiftEntryKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -110,6 +112,7 @@
 				FB3872992D329F8F006AF06F /* Alamofire */,
 				FB6DC2622D3AEF3E00A39DB3 /* CachedAsyncImage */,
 				FBC660472D4186C0008341B1 /* SwiftEntryKit */,
+				FBC6604D2D421342008341B1 /* Vortex */,
 			);
 			productName = Nacho;
 			productReference = FB3872372D3288BF006AF06F /* NachoIos.app */;
@@ -170,6 +173,7 @@
 				FB3872922D329F20006AF06F /* XCRemoteSwiftPackageReference "Alamofire" */,
 				FB6DC2612D3AEE8F00A39DB3 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
 				FBC660462D4186B9008341B1 /* XCRemoteSwiftPackageReference "SwiftEntryKit" */,
+				FBC6604C2D421337008341B1 /* XCRemoteSwiftPackageReference "Vortex" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FB3872382D3288BF006AF06F /* Products */;
@@ -501,6 +505,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		FBC6604C2D421337008341B1 /* XCRemoteSwiftPackageReference "Vortex" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/Vortex";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -518,6 +530,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FBC660462D4186B9008341B1 /* XCRemoteSwiftPackageReference "SwiftEntryKit" */;
 			productName = SwiftEntryKit;
+		};
+		FBC6604D2D421342008341B1 /* Vortex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FBC6604C2D421337008341B1 /* XCRemoteSwiftPackageReference "Vortex" */;
+			productName = Vortex;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

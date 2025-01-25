@@ -165,4 +165,42 @@ final class MockNetworkService: NetworkServiceProvidable {
             feeTotal: 127686124.74309599
         )
     }
+
+    func fetchNFTCollectionInfo(ticker: String) async throws -> NFTCollectionInfo {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return .init(
+            deployer: "kaspatest:qrks6nxgcwl5agrzzlsv7jxjmezfvhv76k2szv23esf7ksay23jeyyqu9nraq",
+            royaltyTo: "kaspatest:qrks6nxgcwl5agrzzlsv7jxjmezfvhv76k2szv23esf7ksay23jeyyqu9nraq",
+            buri: "ipfs://bafybeibg2od46rrhgayb2xfaxsrsgnesgbo6palsxypyz7jmcd544wskl4",
+            max: 1000,
+            royaltyFee: 220000000000,
+            daaMintStart: 0,
+            premint: 10,
+            tick: "NKTTWO",
+            mtsAdd: 1737507750.996,
+            minted: 1000,
+            state: "deployed",
+            mtsmod: 1737646511.724
+        )
+    }
+
+    func fetchNFTInfo(hash: String, index: Int) async throws -> NFTInfo {
+        try await Task.sleep(nanoseconds: 5_000)
+        return .init(
+            name: "Nacho Kats #1",
+            description: "trial 9",
+            image: "ipfs://bafybeicjnult4hnzcyiwna2a5lpwing2mtmxpnch7winppipbwtfaij55y/1.png",
+            edition: 1,
+            attributes: [
+                .init(traitType: "Head", value: "Jester Hat"),
+                .init(traitType: "Face", value: "Cat Eye Glasses"),
+                .init(traitType: "Mood", value: "Confident"),
+                .init(traitType: "Collar", value: "Dog Tags"),
+                .init(traitType: "Outfit", value: "Lab Coat"),
+                .init(traitType: "Role", value: "Keeper"),
+                .init(traitType: "Tail", value: "Base"),
+                .init(traitType: "Background", value: "Orange")
+            ]
+        )
+    }
 }

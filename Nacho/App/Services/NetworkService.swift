@@ -12,6 +12,8 @@ protocol NetworkServiceProvidable: AnyObject {
     func fetchAddressTokenList(address: String) async throws -> [AddressTokenInfo]
     func fetchAddressBalance(address: String) async throws -> AddressBalance
     func fetchKasplexInfo() async throws -> KasplexInfo
+    func fetchNFTCollectionInfo(ticker: String) async throws -> NFTCollectionInfo
+    func fetchNFTInfo(hash: String, index: Int) async throws -> NFTInfo
 }
 
 // NetworkService implementation
@@ -21,6 +23,7 @@ final class NetworkService: NetworkServiceProvidable {
     private let kasfyiBaseURL = Constants.kasfyiBaseUrl
     private let kasplexBaseURL = Constants.kasplexBaseUrl
     private let kaspaOrgBaseURL = Constants.kaspaOrgBaseUrl
+    private let nftUrl = Constants.nftKatscanUrl
 
     func fetchTokenList() async throws -> [TokenDeployInfo] {
         // TODO: Consider to expose it as a parameter in the function
@@ -161,6 +164,34 @@ final class NetworkService: NetworkServiceProvidable {
             throw NetworkError.somethingWentWrong
         }
     }
+
+    func fetchNFTCollectionInfo(ticker: String) async throws -> NFTCollectionInfo {
+        let dataTask = AF.request(nftUrl + Endpoint.nftCollection(ticker).value)
+            .validate()
+            .serializingDecodable(ResponseWrapper<NFTCollectionInfo>.self)
+
+        do {
+            let response = try await dataTask.value
+            return response.result
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
+
+    func fetchNFTInfo(hash: String, index: Int) async throws -> NFTInfo {
+        let dataTask = AF.request(nftUrl + Endpoint.nftInfo(hash, index).value)
+            .validate()
+            .serializingDecodable(NFTInfo.self)
+
+        do {
+            let response = try await dataTask.value
+            return response
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
 }
 
 private extension NetworkService {
@@ -175,6 +206,8 @@ private extension NetworkService {
         case addressTokenList(String)
         case addressBalance(String)
         case kasplexInfo
+        case nftCollection(String)
+        case nftInfo(String, Int)
 
         var value: String {
             switch self {
@@ -187,6 +220,8 @@ private extension NetworkService {
             case .addressTokenList(let address): return "/krc20/address/\(address)/tokenlist"
             case .addressBalance(let address): return "/addresses/\(address)/balance"
             case .kasplexInfo: return "/info"
+            case .nftCollection(let ticker): return "/krc721/nfts/\(ticker)"
+            case .nftInfo(let hash, let index): return "/ipfs/\(hash)/\(index).json"
             }
         }
     }

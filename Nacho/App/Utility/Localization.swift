@@ -28,6 +28,7 @@ enum Localization {
     static let tabScan = "tab_scan".localized
     static let tabPool = "tab_pool".localized
     static let tabBot = "tab_bot".localized
+    static let tabNFTs = "tab_nfts".localized
 
     // Home
     static let homeNavigationTitle = "home_navigation_title".localized
@@ -61,6 +62,11 @@ enum Localization {
     static let kasplexInfoTotalTransactions = "kasplex_info_total_transactions".localized
     static let kasplexInfoTokensDeployed = "kasplex_info_tokens_deployed".localized
     static let kasplexInfoFeesPaid = "kasplex_info_fees_paid".localized
+
+    // NFTs
+    static let nftsTitle = "nfts_title".localized
+    static let nftsGameTitle = "nfts_game_title".localized
+    static let nftsButtonPlayAgain = "nfts_button_play_again".localized
 
     // Edge Cases
     static let emptyTokensText = "empty_tokens_text".localized

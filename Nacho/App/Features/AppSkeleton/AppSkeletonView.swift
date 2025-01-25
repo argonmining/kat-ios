@@ -42,23 +42,29 @@ struct AppSkeletonView: View {
                     }
                     .tag(TabType.katScan)
 
-                    Text(Localization.tabPool)
-                        .tabItem {
-                            Label(
-                                Localization.tabPool,
-                                systemImage: "cube.fill"
-                            )
-                        }
-                        .tag(TabType.katPool)
+//                    Text(Localization.tabPool)
+//                        .tabItem {
+//                            Label(
+//                                Localization.tabPool,
+//                                systemImage: "cube.fill"
+//                            )
+//                        }
+//                        .tag(TabType.katPool)
 
-                    Text(Localization.tabBot)
-                        .tabItem {
-                            Label(
-                                Localization.tabBot,
-                                systemImage: "bubble.left.and.bubble.right.fill"
+                    NavigationStack {
+                        NFTsView(
+                            viewModel: NFTsViewModel(
+                                networkService: viewModel.networkService
                             )
-                        }
-                        .tag(TabType.katBot)
+                        )
+                    }
+                    .tabItem {
+                        Label(
+                            Localization.tabNFTs,
+                            systemImage: "photo.stack.fill"
+                        )
+                    }
+                    .tag(TabType.katBot)
                 }
                 .transition(.opacity)
             } else {

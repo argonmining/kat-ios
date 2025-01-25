@@ -32,6 +32,7 @@
 "tab_scan" = "Kat Scan";
 "tab_pool" = "Kat Pool";
 "tab_bot" = "Kat Bot";
+"tab_nfts" = "NFTs";
 
 // Home
 "home_navigation_title" = "Kat's Home";
@@ -65,6 +66,11 @@
 "kasplex_info_total_transactions" = "Total Transactions";
 "kasplex_info_tokens_deployed" = "Tokens Deployed";
 "kasplex_info_fees_paid" = "Fees Paid";
+
+// NFTs
+"nfts_title" = "NFTs";
+"nfts_game_title" = "Memory Game";
+"nfts_button_play_again" = "Play Again";
 
 // Edge Cases
 "empty_tokens_text" = "No tokens match your request. Please try adjusting the filter or searching for a different token name.";
