@@ -14,16 +14,16 @@ struct TokenDetailsView: View {
                     .padding(Spacing.padding_2)
                 }
 
-                VStack {
-                    Spacer()
-                    tradeButton
-                        .padding(.horizontal, Spacing.padding_2)
-                        .padding(.top, Spacing.padding_2)
-                        .padding(.bottom, Spacing.padding_5)
-                        .background(Color.surfaceForeground)
-                }
-                .frame(maxWidth: .infinity)
-                .ignoresSafeArea(edges: .bottom)
+//                VStack {
+//                    Spacer()
+//                    tradeButton
+//                        .padding(.horizontal, Spacing.padding_2)
+//                        .padding(.top, Spacing.padding_2)
+//                        .padding(.bottom, Spacing.padding_5)
+//                        .background(Color.surfaceForeground)
+//                }
+//                .frame(maxWidth: .infinity)
+//                .ignoresSafeArea(edges: .bottom)
             }
             .navigationTitle(viewModel.tokenInfo.tick)
             .background(Color.surfaceForeground.ignoresSafeArea())

@@ -1,4 +1,5 @@
 import SwiftUI
+import Vortex
 
 struct NFTsView: View {
 
@@ -207,6 +208,35 @@ struct NFTDetailView: View {
 
     var body: some View {
         ZStack {
+            if let style = NFTStyleItem.background.style(from: nft.attributes), style == "Rainstorm" {
+                VortexView(.rain) {
+                    Circle()
+                        .fill(.white)
+                        .frame(width: 16)
+                        .tag("circle")
+                }
+                VortexView(.splash) {
+                    Circle()
+                        .fill(.white)
+                        .frame(width: 16)
+                        .tag("circle")
+                }
+            } else if let style = NFTStyleItem.background.style(from: nft.attributes), style == "Volcano" {
+                VortexView(.smoke) {
+                    Circle()
+                        .fill(.white)
+                        .frame(width: 64)
+                        .tag("circle")
+                }
+                .offset(y: -200)
+            } else if let style = NFTStyleItem.background.style(from: nft.attributes), style == "Snowy Tundra" {
+                VortexView(.snow) {
+                    Circle()
+                        .fill(.white)
+                        .frame(width: 16)
+                        .tag("circle")
+                }
+            }
             Color.surfaceBackground.opacity(0.5)
                 .ignoresSafeArea()
                 .onTapGesture {

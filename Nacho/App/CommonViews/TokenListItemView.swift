@@ -36,11 +36,11 @@ struct TokenListItemView: View {
                     Spacer()
                     Text(holdersString).typography(.body2).lineLimit(1)
                 }
-                HStack {
-                    Text(Localization.tradeText + ":").typography(.body2, color: .textSecondary)
-                    Spacer()
-                    tradeButton
-                }
+//                HStack {
+//                    Text(Localization.tradeText + ":").typography(.body2, color: .textSecondary)
+//                    Spacer()
+//                    tradeButton
+//                }
             }
         }
     }
