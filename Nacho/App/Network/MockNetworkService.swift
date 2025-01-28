@@ -185,7 +185,7 @@ final class MockNetworkService: NetworkServiceProvidable {
     }
 
     func fetchNFTInfo(hash: String, index: Int) async throws -> NFTInfo {
-        try await Task.sleep(nanoseconds: 5_000)
+        try await Task.sleep(nanoseconds: 2_000)
         return .init(
             name: "Nacho Kats #1",
             description: "trial 9",
@@ -202,5 +202,34 @@ final class MockNetworkService: NetworkServiceProvidable {
                 .init(traitType: "Background", value: "Orange")
             ]
         )
+    }
+
+    func fetchKatPoolBlocks() async throws -> PoolBlocks {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return .init(totalBlocks: 140)
+    }
+
+    func fetchKatPoolBlocks24() async throws -> PoolBlocks24h {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return .init(totalBlocks24h: 11)
+    }
+
+    func fetchKatPoolMiners() async throws -> PoolMiners {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return .init(
+            labels: ["IceRiver", "Bitmain", "GoldShell"],
+            values: [95, 10, 8]
+        )
+    }
+
+    func fetchKatPoolHistory(range: Int) async throws -> [PoolHistoryValue] {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return [
+            PoolHistoryValue(timestamp: 1737484553.0, hashRate: 190104.81893454556),
+            PoolHistoryValue(timestamp: 1737488153.0, hashRate: 186638.58068274715),
+            PoolHistoryValue(timestamp: 1737491753.0, hashRate: 208658.48159911227),
+            PoolHistoryValue(timestamp: 1737495353.0, hashRate: 251361.32375737873),
+            PoolHistoryValue(timestamp: 1737498953.0, hashRate: 255225.97633716525)
+        ]
     }
 }

@@ -60,7 +60,6 @@ final class NFTsViewModel {
                     self.currentIndex += 1
                     nft.image = String(nft.edition)
                     self.nfts.append(nft)
-                    print(self.currentIndex)
                 }
             }
 
@@ -77,7 +76,6 @@ final class NFTsViewModel {
             await MainActor.run {
                 self.nfts.append(nftInfo)
                 self.currentIndex += 1
-                print(nftInfo.image)
             }
         } catch {
             // TODO: Add error handling
@@ -128,14 +126,5 @@ final class NFTsViewModel {
                 groupedNFTs[id]?.append(nft)
             }
         }
-
-        print("Heads: \(heads.count) - \(heads)")
-        print("Faces: \(faces.count) - \(faces)")
-        print("Moods: \(moods.count) - \(moods)")
-        print("Collars: \(collars.count) - \(collars)")
-        print("Outfits: \(outfits.count) - \(outfits)")
-        print("Roles: \(roles.count) - \(roles)")
-        print("Tails: \(tails.count) - \(tails)")
-        print("Backgrounds: \(backgrounds.count) - \(backgrounds)")
     }
 }

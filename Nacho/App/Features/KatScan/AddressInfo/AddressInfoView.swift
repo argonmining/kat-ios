@@ -55,7 +55,7 @@ struct AddressInfoView: View {
         if let addressBalance = viewModel.addressBalance, !viewModel.isBalanceLoading {
             HStack(alignment: .lastTextBaseline) {
                 Spacer()
-                Text(Formatter.formatToNumber(value: addressBalance.balance, decimal: 3))
+                Text(Formatter.formatToNumber(addressBalance.balance, decimal: 3))
                     .typography(.numeric2)
                     .lineLimit(1)
                 Text("KAS")
@@ -88,12 +88,12 @@ struct AddressInfoView: View {
                             Spacer()
                             if token.locked > 0 {
                                 PillDS(
-                                    text: Formatter.formatToNumber(value: token.locked),
+                                    text: Formatter.formatToNumber(token.locked),
                                     color: .solidWarning,
                                     iconName: "lock.fill"
                                 )
                             }
-                            Text(Formatter.formatToNumber(value: token.balance))
+                            Text(Formatter.formatToNumber(token.balance))
                                 .typography(.body1)
                                 .lineLimit(1)
                         }

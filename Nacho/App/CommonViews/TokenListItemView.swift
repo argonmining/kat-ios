@@ -11,7 +11,7 @@ struct TokenListItemView: View {
                     TokenImage(tokenInfo.tick)
                     VStack(alignment: .leading, spacing: Spacing.padding_0_2_5) {
                         Text(tokenInfo.tick).typography(.body1)
-                        Text(Formatter.formatDate(value: tokenInfo.releaseTimeInterval)).typography(.caption2)
+                        Text(Formatter.formatDate(tokenInfo.releaseTimeInterval)).typography(.caption2)
                     }
                     Spacer()
                     VStack(alignment: .trailing, spacing: Spacing.padding_0_5) {
@@ -76,19 +76,19 @@ struct TokenListItemView: View {
     }
 
     private var premintedString: String {
-        Formatter.formatToNumber(value: tokenInfo.preMinted)
+        Formatter.formatToNumber(tokenInfo.preMinted)
     }
 
     private var mintedString: String {
-        Formatter.formatToNumber(value: tokenInfo.minted + tokenInfo.preMinted)
+        Formatter.formatToNumber(tokenInfo.minted + tokenInfo.preMinted)
     }
 
     private var supplyString: String {
-        Formatter.formatToNumber(value: tokenInfo.maxSupply)
+        Formatter.formatToNumber(tokenInfo.maxSupply)
     }
 
     private var holdersString: String {
-        Formatter.formatToNumber(value: tokenInfo.holdersTotal)
+        Formatter.formatToNumber(tokenInfo.holdersTotal)
     }
 
     private var showSegmentedBar: Bool {

@@ -127,22 +127,22 @@ struct CompareTokensView: View {
                     }
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("$\(Formatter.formatToNumber(value: tokenPriceData1.price, decimal: 8))")
+                            Text("$\(Formatter.formatToNumber(tokenPriceData1.price, decimal: 8))")
                                 .typography(.numeric3)
                                 .lineLimit(1)
                             PillDS(
-                                text: Formatter.formatPercentage(value: tokenPriceData1.change, decimal: 2),
+                                text: Formatter.formatPercentage(tokenPriceData1.change, decimal: 2),
                                 style: .medium,
                                 color: tokenPriceData1.change >= 0 ? .solidSuccess : .solidDanger
                             )
                         }
                         Spacer()
                         VStack(alignment: .trailing) {
-                            Text("$\(Formatter.formatToNumber(value: tokenPriceData2.price, decimal: 8))")
+                            Text("$\(Formatter.formatToNumber(tokenPriceData2.price, decimal: 8))")
                                 .typography(.numeric3)
                                 .lineLimit(1)
                             PillDS(
-                                text: Formatter.formatPercentage(value: tokenPriceData2.change, decimal: 2),
+                                text: Formatter.formatPercentage(tokenPriceData2.change, decimal: 2),
                                 style: .medium,
                                 color: tokenPriceData2.change >= 0 ? .solidSuccess : .solidDanger
                             )
@@ -157,12 +157,12 @@ struct CompareTokensView: View {
                     }
                     .padding(.top, Spacing.padding_2)
                     HStack {
-                        LineChartDS(tradeData: $viewModel.chartData1, showVerticalLabels: false)
+                        LineChartDS(chartData: $viewModel.chartData1, showVerticalLabels: false, decimal: 8)
                             .frame(maxWidth: .infinity)
                             .frame(height: 100)
                         Spacer()
                             .frame(width: Spacing.padding_2)
-                        LineChartDS(tradeData: $viewModel.chartData2, showVerticalLabels: false)
+                        LineChartDS(chartData: $viewModel.chartData2, showVerticalLabels: false, decimal: 8)
                             .frame(maxWidth: .infinity)
                             .frame(height: 100)
                     }
@@ -175,11 +175,11 @@ struct CompareTokensView: View {
                     }
                     .padding(.top, Spacing.padding_2)
                     HStack {
-                        Text(Formatter.formatToUSD(value: tokenPriceData1.marketCap, decimal: 0))
+                        Text(Formatter.formatToUSD(tokenPriceData1.marketCap, decimal: 0))
                             .typography(.numeric4)
                             .lineLimit(1)
                         Spacer()
-                        Text(Formatter.formatToUSD(value: tokenPriceData2.marketCap, decimal: 0))
+                        Text(Formatter.formatToUSD(tokenPriceData2.marketCap, decimal: 0))
                             .typography(.numeric4)
                             .lineLimit(1)
                     }
@@ -192,11 +192,11 @@ struct CompareTokensView: View {
                     }
                     .padding(.top, Spacing.padding_2)
                     HStack {
-                        Text(Formatter.formatToUSD(value: tokenPriceData1.volume, decimal: 0))
+                        Text(Formatter.formatToUSD(tokenPriceData1.volume, decimal: 0))
                             .typography(.numeric4)
                             .lineLimit(1)
                         Spacer()
-                        Text(Formatter.formatToUSD(value: tokenPriceData2.volume, decimal: 0))
+                        Text(Formatter.formatToUSD(tokenPriceData2.volume, decimal: 0))
                             .typography(.numeric4)
                             .lineLimit(1)
                     }

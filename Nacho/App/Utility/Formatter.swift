@@ -2,7 +2,7 @@ import Foundation
 
 struct Formatter {
 
-    static func formatToUSD(value: Double, decimal: Int = 2) -> String {
+    static func formatToUSD(_ value: Double, decimal: Int = 2) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = "USD"
@@ -11,7 +11,7 @@ struct Formatter {
         return formatter.string(from: NSNumber(value: value)) ?? ""
     }
 
-    static func formatToNumber(value: Double, decimal: Int = 0) -> String {
+    static func formatToNumber(_ value: Double, decimal: Int = 0) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = decimal
@@ -19,7 +19,7 @@ struct Formatter {
         return formatter.string(from: NSNumber(value: value)) ?? ""
     }
 
-    static func formatDate(value: TimeInterval) -> String {
+    static func formatDate(_ value: TimeInterval) -> String {
         let date = Date(timeIntervalSince1970: value)
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -28,7 +28,7 @@ struct Formatter {
         return formatter.string(from: date)
     }
 
-    static func formatDateAndTime(value: TimeInterval) -> String {
+    static func formatDateAndTime(_ value: TimeInterval) -> String {
         let date = Date(timeIntervalSince1970: value)
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -37,7 +37,7 @@ struct Formatter {
         return formatter.string(from: date)
     }
 
-    static func formatPercentage(value: Double, decimal: Int = 0) -> String {
+    static func formatPercentage(_ value: Double, decimal: Int = 0) -> String {
         return String(format: "%.\(decimal)f%%", value)
     }
 }

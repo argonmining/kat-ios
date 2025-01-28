@@ -3,15 +3,16 @@ import Charts
 
 struct LineChartDS: View {
 
-    @Binding var tradeData: [ChartTradeItem]?
+    @Binding var chartData: [ChartData]?
     let showVerticalLabels: Bool
+    let decimal: Int
     @State private var minValue: Double = 0
     @State private var maxValue: Double = 0
     @State private var delta: Double = 0
 
     var body: some View {
         Group {
-            if let tradeData = tradeData {
+            if let tradeData = chartData {
                 Chart(tradeData) { item in
                     AreaMark(
                         x: .value("Time", Date(timeIntervalSince1970: item.timestamp)),
@@ -52,7 +53,7 @@ struct LineChartDS: View {
                         AxisMarks(values: .automatic) { value in
                             if let priceValue = value.as(Double.self) {
                                 AxisValueLabel {
-                                    Text(String(format: "%.8f", priceValue))
+                                    Text(String(format: "%.\(decimal)f", priceValue))
                                 }
                             }
                             AxisTick()
@@ -72,12 +73,12 @@ struct LineChartDS: View {
             }
         }
         .onAppear {
-            guard let tradeData else { return }
-            minValue = tradeData.min(by: { $0.value < $1.value })?.value ?? 0
-            maxValue = tradeData.max(by: { $0.value < $1.value })?.value ?? 0
+            guard let chartData else { return }
+            minValue = chartData.min(by: { $0.value < $1.value })?.value ?? 0
+            maxValue = chartData.max(by: { $0.value < $1.value })?.value ?? 0
             delta = (maxValue - minValue) / 3
         }
-        .onChange(of: tradeData) { _, newValue in
+        .onChange(of: chartData) { _, newValue in
             guard let newValue else { return }
             minValue = newValue.min(by: { $0.value < $1.value })?.value ?? 0
             maxValue = newValue.max(by: { $0.value < $1.value })?.value ?? 0
@@ -86,11 +87,20 @@ struct LineChartDS: View {
     }
 }
 
+extension LineChartDS {
+
+    struct ChartData: Identifiable, Hashable {
+        let id: UUID
+        let timestamp: Double
+        let value: Double
+    }
+}
+
 #Preview {
-    LineChartDS(tradeData: .constant([
-        ChartTradeItem(timestamp: 1673500000, value: 0.00008575),
-        ChartTradeItem(timestamp: 1673503600, value: 0.00008629),
-        ChartTradeItem(timestamp: 1673507200, value: 0.00008757),
-        ChartTradeItem(timestamp: 1673510800, value: 0.00008739)
-    ]), showVerticalLabels: true)
+    LineChartDS(chartData: .constant([
+        LineChartDS.ChartData(id: UUID(), timestamp: 1673500000, value: 0.00008575),
+        LineChartDS.ChartData(id: UUID(), timestamp: 1673503600, value: 0.00008629),
+        LineChartDS.ChartData(id: UUID(), timestamp: 1673507200, value: 0.00008757),
+        LineChartDS.ChartData(id: UUID(), timestamp: 1673510800, value: 0.00008739)
+    ]), showVerticalLabels: true, decimal: 8)
 }

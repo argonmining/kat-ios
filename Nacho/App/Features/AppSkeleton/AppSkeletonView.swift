@@ -42,14 +42,20 @@ struct AppSkeletonView: View {
                     }
                     .tag(TabType.katScan)
 
-//                    Text(Localization.tabPool)
-//                        .tabItem {
-//                            Label(
-//                                Localization.tabPool,
-//                                systemImage: "cube.fill"
-//                            )
-//                        }
-//                        .tag(TabType.katPool)
+                    NavigationStack {
+                        KatPoolView(
+                            viewModel: KatPoolViewModel(
+                                networkService: viewModel.networkService
+                            )
+                        )
+                    }
+                    .tabItem {
+                        Label(
+                            Localization.tabPool,
+                            systemImage: "cube.fill"
+                        )
+                    }
+                    .tag(TabType.katPool)
 
                     NavigationStack {
                         NFTsView(

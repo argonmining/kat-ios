@@ -41,7 +41,7 @@ struct HomeView: View {
                     PriceWidgetView(viewData: $viewModel.tokenPriceData)
                 }
 
-                PriceChartWidgetView(tradeData: $viewModel.chartData)
+                PriceChartWidgetView(chartData: $viewModel.chartData)
 
                 if viewModel.showHolders {
                     WidgetDS {
@@ -70,15 +70,15 @@ struct HomeView: View {
     }
 
     private var supplyString: String {
-        Formatter.formatToNumber(value: NachoInfo.maxSupply)
+        Formatter.formatToNumber(NachoInfo.maxSupply)
     }
 
     private var totalMintsString: String {
-        Formatter.formatToNumber(value: NachoInfo.mintTotal)
+        Formatter.formatToNumber(NachoInfo.mintTotal)
     }
 
     private var dateString: String {
-        Formatter.formatDate(value: NachoInfo.releaseTimeInterval)
+        Formatter.formatDate(NachoInfo.releaseTimeInterval)
     }
 }
 

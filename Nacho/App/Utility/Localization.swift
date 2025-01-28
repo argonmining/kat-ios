@@ -63,6 +63,13 @@ enum Localization {
     static let kasplexInfoTokensDeployed = "kasplex_info_tokens_deployed".localized
     static let kasplexInfoFeesPaid = "kasplex_info_fees_paid".localized
 
+    // Kat Pool
+    static let katPoolTitle = "kat_pool_title".localized
+    static let katPoolBlocks = "kat_pool_blocks".localized
+    static let katPoolBlocks24h = "kat_pool_blocks_24h".localized
+    static let katPoolMinersTitle = "kat_pool_miners_title".localized
+    static let katPoolHashrateTitle = "kat_pool_hashrate_title".localized
+
     // NFTs
     static let nftsTitle = "nfts_title".localized
     static let nftsGameTitle = "nfts_game_title".localized

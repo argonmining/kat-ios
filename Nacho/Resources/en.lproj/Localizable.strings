@@ -67,6 +67,13 @@
 "kasplex_info_tokens_deployed" = "Tokens Deployed";
 "kasplex_info_fees_paid" = "Fees Paid";
 
+// Kat Pool
+"kat_pool_title" = "Kat Pool";
+"kat_pool_blocks" = "Blocks";
+"kat_pool_blocks_24h" = "Blocks 24h";
+"kat_pool_miners_title" = "Miners";
+"kat_pool_hashrate_title" = "Hashrate";
+
 // NFTs
 "nfts_title" = "NFTs";
 "nfts_game_title" = "Memory Game";

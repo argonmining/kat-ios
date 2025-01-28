@@ -31,7 +31,7 @@ struct TopHoldersView: View {
                             Notifications.presentTopMessage(Localization.addressCopyMessage)
                         }
                         Spacer()
-                        Text(Formatter.formatToNumber(value: holder.amount))
+                        Text(Formatter.formatToNumber(holder.amount))
                             .typography(.body1)
                             .lineLimit(1)
                         Text(holderPercentage(amount: holder.amount))
@@ -75,7 +75,7 @@ struct TopHoldersView: View {
 
     private func holderPercentage(amount: Double) -> String {
         let value = amount / supply * 100
-        return Formatter.formatToNumber(value: value, decimal: 1) + "%"
+        return Formatter.formatToNumber(value, decimal: 1) + "%"
     }
 }
 

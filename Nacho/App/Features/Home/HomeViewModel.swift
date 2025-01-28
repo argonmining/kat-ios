@@ -5,7 +5,7 @@ import Observation
 final class HomeViewModel {
 
     var tokenPriceData: TokenPriceData? = nil
-    var chartData: [ChartTradeItem]? = nil
+    var chartData: [LineChartDS.ChartData]? = nil
     var holders: [HolderInfo]? = nil
     var showHolders: Bool = true
 
@@ -22,7 +22,7 @@ final class HomeViewModel {
             let result = try (await infoResponse, await chartResponse)
             await MainActor.run {
                 self.tokenPriceData = TokenPriceData(fromTokenInfoResponse: result.0)
-                self.chartData = result.1.candles
+                self.chartData = result.1.candles.compactMap({$0.toChartDataItem()})
             }
         } catch {
             // TODO: Add error handling

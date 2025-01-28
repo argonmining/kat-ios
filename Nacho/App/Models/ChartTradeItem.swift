@@ -43,4 +43,8 @@ struct ChartTradeItem: Decodable, Identifiable, Equatable {
         }
         value = closeValue
     }
+
+    func toChartDataItem() -> LineChartDS.ChartData {
+        return .init(id: id, timestamp: timestamp, value: value)
+    }
 }

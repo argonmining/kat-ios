@@ -1,6 +1,7 @@
 import Foundation
 
 enum Radius {
+    static let radius_0_5: CGFloat = 2
     static let radius_1: CGFloat = 4
     static let radius_2: CGFloat = 8
     static let radius_3: CGFloat = 12

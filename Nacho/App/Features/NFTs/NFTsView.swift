@@ -154,7 +154,7 @@ struct NFTsView: View {
                         Spacer()
                     }
                     HStack {
-                        Text("\(Formatter.formatToNumber(value: Double(collectionInfo.minted))) / \(Formatter.formatToNumber(value: Double(collectionInfo.max)))")
+                        Text("\(Formatter.formatToNumber(Double(collectionInfo.minted))) / \(Formatter.formatToNumber(Double(collectionInfo.max)))")
                             .typography(.numeric3)
                             .lineLimit(1)
                         Spacer()
@@ -168,7 +168,7 @@ struct NFTsView: View {
                         Spacer()
                     }
                     HStack {
-                        Text("\(Formatter.formatToNumber(value: Double(collectionInfo.premint)))")
+                        Text("\(Formatter.formatToNumber(Double(collectionInfo.premint)))")
                             .typography(.numeric3)
                             .lineLimit(1)
                         Spacer()

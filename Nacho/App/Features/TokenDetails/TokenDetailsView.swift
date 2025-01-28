@@ -53,7 +53,7 @@ struct TokenDetailsView: View {
                     PillDS(text: changeString, style: .large, color: changeColor)
                         .shimmer(isActive: viewModel.tokenPriceData == nil)
                 }
-                LineChartDS(tradeData: $viewModel.chartData, showVerticalLabels: true)
+                LineChartDS(chartData: $viewModel.chartData, showVerticalLabels: true, decimal: 8)
                     .frame(maxWidth: .infinity)
                     .frame(height: 200)
                     .padding(.bottom, Spacing.padding_1)
@@ -171,35 +171,35 @@ struct TokenDetailsView: View {
     }
 
     private var marketCapString: String {
-        Formatter.formatToUSD(value: viewModel.tokenPriceData?.marketCap ?? 0)
+        Formatter.formatToUSD(viewModel.tokenPriceData?.marketCap ?? 0)
     }
 
     private var changeString: String {
-        Formatter.formatPercentage(value: viewModel.tokenPriceData?.change ?? 0)
+        Formatter.formatPercentage(viewModel.tokenPriceData?.change ?? 0)
     }
 
     private var volumeString: String {
-        return Formatter.formatToUSD(value: viewModel.tokenPriceData?.volume ?? 0)
+        return Formatter.formatToUSD(viewModel.tokenPriceData?.volume ?? 0)
     }
 
     private var premintedString: String {
-        Formatter.formatToNumber(value: viewModel.tokenInfo.preMinted)
+        Formatter.formatToNumber(viewModel.tokenInfo.preMinted)
     }
 
     private var mintedString: String {
-        Formatter.formatToNumber(value: viewModel.tokenInfo.minted + viewModel.tokenInfo.preMinted)
+        Formatter.formatToNumber(viewModel.tokenInfo.minted + viewModel.tokenInfo.preMinted)
     }
 
     private var supplyString: String {
-        Formatter.formatToNumber(value: viewModel.tokenInfo.maxSupply)
+        Formatter.formatToNumber(viewModel.tokenInfo.maxSupply)
     }
 
     private var holdersString: String {
-        Formatter.formatToNumber(value: viewModel.tokenInfo.holdersTotal)
+        Formatter.formatToNumber(viewModel.tokenInfo.holdersTotal)
     }
 
     private var deployDateString: String {
-        Formatter.formatDateAndTime(value: NachoInfo.releaseTimeInterval)
+        Formatter.formatDateAndTime(NachoInfo.releaseTimeInterval)
     }
 
     private var changeColor: Color {

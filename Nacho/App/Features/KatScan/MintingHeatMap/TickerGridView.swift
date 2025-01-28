@@ -33,7 +33,7 @@ struct TickerGridView: View {
                                         VStack {
                                             Text(ticker.tick)
                                                 .typography(.body1, color: .textOnSolid)
-                                            Text(Formatter.formatToNumber(value: ticker.mintTotal))
+                                            Text(Formatter.formatToNumber(ticker.mintTotal))
                                                 .typography(.caption2, color: .textOnSolid)
                                                 .lineLimit(1)
                                         }

@@ -41,7 +41,7 @@ struct PriceWidgetView: View {
     }
 
     private var stringMarketCap: String {
-        return Formatter.formatToUSD(value: viewData?.marketCap ?? 0)
+        return Formatter.formatToUSD(viewData?.marketCap ?? 0)
     }
 
     private var stringChange: String {
@@ -49,7 +49,7 @@ struct PriceWidgetView: View {
     }
 
     private var stringVolume: String {
-        return Formatter.formatToUSD(value: viewData?.volume ?? 0)
+        return Formatter.formatToUSD(viewData?.volume ?? 0)
     }
 
     private var changeColor: Color {

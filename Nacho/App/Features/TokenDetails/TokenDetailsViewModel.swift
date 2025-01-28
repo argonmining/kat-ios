@@ -6,7 +6,7 @@ final class TokenDetailsViewModel {
 
     var tokenInfo: TokenDeployInfo
     var tokenPriceData: TokenPriceData? = nil
-    var chartData: [ChartTradeItem]? = nil
+    var chartData: [LineChartDS.ChartData]? = nil
     var holders: [HolderInfo]? = nil
     var showTradeInfo: Bool = true
     var showHolders: Bool = true
@@ -25,7 +25,7 @@ final class TokenDetailsViewModel {
             let result = try (await infoResponse, await chartResponse)
             await MainActor.run {
                 self.tokenPriceData = TokenPriceData(fromTokenInfoResponse: result.0)
-                self.chartData = result.1.candles
+                self.chartData = result.1.candles.compactMap({$0.toChartDataItem()})
             }
         } catch {
             // TODO: Add error handling

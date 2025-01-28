@@ -14,6 +14,10 @@ protocol NetworkServiceProvidable: AnyObject {
     func fetchKasplexInfo() async throws -> KasplexInfo
     func fetchNFTCollectionInfo(ticker: String) async throws -> NFTCollectionInfo
     func fetchNFTInfo(hash: String, index: Int) async throws -> NFTInfo
+    func fetchKatPoolBlocks() async throws -> PoolBlocks
+    func fetchKatPoolBlocks24() async throws -> PoolBlocks24h
+    func fetchKatPoolMiners() async throws -> PoolMiners
+    func fetchKatPoolHistory(range: Int) async throws -> [PoolHistoryValue]
 }
 
 // NetworkService implementation
@@ -24,6 +28,7 @@ final class NetworkService: NetworkServiceProvidable {
     private let kasplexBaseURL = Constants.kasplexBaseUrl
     private let kaspaOrgBaseURL = Constants.kaspaOrgBaseUrl
     private let nftUrl = Constants.nftKatscanUrl
+    private let katPoolUrl = Constants.katPoolUrl
 
     func fetchTokenList() async throws -> [TokenDeployInfo] {
         // TODO: Consider to expose it as a parameter in the function
@@ -192,6 +197,63 @@ final class NetworkService: NetworkServiceProvidable {
             throw NetworkError.somethingWentWrong
         }
     }
+
+    func fetchKatPoolBlocks() async throws -> PoolBlocks {
+        let dataTask = AF.request(katPoolUrl + Endpoint.blocks.value)
+            .validate()
+            .serializingDecodable(DataResponseWrapper<PoolBlocks>.self)
+        do {
+            let response = try await dataTask.value
+            return response.data
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
+
+    func fetchKatPoolBlocks24() async throws -> PoolBlocks24h {
+        let dataTask = AF.request(katPoolUrl + Endpoint.blocks24h.value)
+            .validate()
+            .serializingDecodable(DataResponseWrapper<PoolBlocks24h>.self)
+        do {
+            let response = try await dataTask.value
+            return response.data
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
+
+    func fetchKatPoolMiners() async throws -> PoolMiners {
+        let dataTask = AF.request(katPoolUrl + Endpoint.miners.value)
+            .validate()
+            .serializingDecodable(DataResponseWrapper<PoolMiners>.self)
+        do {
+            let response = try await dataTask.value
+            return response.data
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
+
+    func fetchKatPoolHistory(range: Int) async throws -> [PoolHistoryValue] {
+        let parameters: [String: Any] = ["range": "\(range)d"]
+        let dataTask = AF.request(katPoolUrl + Endpoint.poolHistory.value, parameters: parameters)
+            .validate()
+            .serializingDecodable(DataResponseWrapper<PoolHistoryRsponse>.self)
+        do {
+            let response = try await dataTask.value
+            guard let values = response.data.result.first?.values else {
+                print("Error: can't decode pool history values")
+                throw NetworkError.somethingWentWrong
+            }
+            return values
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
 }
 
 private extension NetworkService {
@@ -208,6 +270,11 @@ private extension NetworkService {
         case kasplexInfo
         case nftCollection(String)
         case nftInfo(String, Int)
+        // Kat Pool
+        case blocks
+        case blocks24h
+        case miners
+        case poolHistory
 
         var value: String {
             switch self {
@@ -222,6 +289,10 @@ private extension NetworkService {
             case .kasplexInfo: return "/info"
             case .nftCollection(let ticker): return "/krc721/nfts/\(ticker)"
             case .nftInfo(let hash, let index): return "/ipfs/\(hash)/\(index).json"
+            case .blocks: return "/blocks"
+            case .blocks24h: return "/blocks24h"
+            case .miners: return "/minerTypes"
+            case .poolHistory: return "/hashrate/history"
             }
         }
     }
@@ -229,5 +300,9 @@ private extension NetworkService {
     // Response wrapper for the JSON structure
     struct ResponseWrapper<T: Decodable>: Decodable {
         let result: T
+    }
+
+    struct DataResponseWrapper<T: Decodable>: Decodable {
+        let data: T
     }
 }

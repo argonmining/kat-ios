@@ -11,10 +11,10 @@ final class CompareTokensViewModel {
     var showTokenSelection: Bool = false
     var showTradeInfo1: Bool = false
     var tokenPriceData1: TokenPriceData? = nil
-    var chartData1: [ChartTradeItem]? = nil
+    var chartData1: [LineChartDS.ChartData]? = nil
     var showTradeInfo2: Bool = false
     var tokenPriceData2: TokenPriceData? = nil
-    var chartData2: [ChartTradeItem]? = nil
+    var chartData2: [LineChartDS.ChartData]? = nil
     var token1Loading: Bool = false
     var token2Loading: Bool = false
     private let tokensInfo: [TokenDeployInfo]
@@ -31,7 +31,7 @@ final class CompareTokensViewModel {
         guard let holders = tokensInfo.filter({ $0.tick == token1 }).first?.holdersTotal else {
             return "-"
         }
-        return Formatter.formatToNumber(value: holders)
+        return Formatter.formatToNumber(holders)
     }
 
     func token2Holders() -> String {
@@ -39,7 +39,7 @@ final class CompareTokensViewModel {
         guard let holders = tokensInfo.filter({ $0.tick == token2 }).first?.holdersTotal else {
             return "-"
         }
-        return Formatter.formatToNumber(value: holders)
+        return Formatter.formatToNumber(holders)
     }
 
     func token1Preminted() -> (Bool, String)? {
@@ -47,7 +47,7 @@ final class CompareTokensViewModel {
         guard let preMinted = tokensInfo.filter({ $0.tick == token1 }).first?.preMinted else {
             return nil
         }
-        return (preMinted == 0, Formatter.formatToNumber(value: preMinted))
+        return (preMinted == 0, Formatter.formatToNumber(preMinted))
     }
 
     func token2Preminted() -> (Bool, String)? {
@@ -55,7 +55,7 @@ final class CompareTokensViewModel {
         guard let preMinted = tokensInfo.filter({ $0.tick == token2 }).first?.preMinted else {
             return nil
         }
-        return (preMinted == 0, Formatter.formatToNumber(value: preMinted))
+        return (preMinted == 0, Formatter.formatToNumber(preMinted))
     }
 
     func token1Supply() -> String {
@@ -63,7 +63,7 @@ final class CompareTokensViewModel {
         guard let supply = tokensInfo.filter({ $0.tick == token1 }).first?.maxSupply else {
             return "-"
         }
-        return Formatter.formatToNumber(value: supply)
+        return Formatter.formatToNumber(supply)
     }
 
     func token2Supply() -> String {
@@ -71,7 +71,7 @@ final class CompareTokensViewModel {
         guard let supply = tokensInfo.filter({ $0.tick == token2 }).first?.maxSupply else {
             return "-"
         }
-        return Formatter.formatToNumber(value: supply)
+        return Formatter.formatToNumber(supply)
     }
 
     func token1Minted() -> String {
@@ -79,7 +79,7 @@ final class CompareTokensViewModel {
         guard let minted = tokensInfo.filter({ $0.tick == token1 }).first?.minted else {
             return "-"
         }
-        return Formatter.formatToNumber(value: minted)
+        return Formatter.formatToNumber(minted)
     }
 
     func token2Minted() -> String {
@@ -87,7 +87,7 @@ final class CompareTokensViewModel {
         guard let minted = tokensInfo.filter({ $0.tick == token2 }).first?.minted else {
             return "-"
         }
-        return Formatter.formatToNumber(value: minted)
+        return Formatter.formatToNumber(minted)
     }
 
     func isLoading() -> Bool {
@@ -115,7 +115,7 @@ final class CompareTokensViewModel {
             let result = try (await infoResponse, await chartResponse)
             await MainActor.run {
                 self.tokenPriceData1 = TokenPriceData(fromTokenInfoResponse: result.0)
-                self.chartData1 = result.1.candles
+                self.chartData1 = result.1.candles.compactMap({$0.toChartDataItem()})
                 token1Loading = false
             }
         } catch {
@@ -135,7 +135,7 @@ final class CompareTokensViewModel {
             let result = try (await infoResponse, await chartResponse)
             await MainActor.run {
                 self.tokenPriceData2 = TokenPriceData(fromTokenInfoResponse: result.0)
-                self.chartData2 = result.1.candles
+                self.chartData2 = result.1.candles.compactMap({$0.toChartDataItem()})
                 token2Loading = false
             }
         } catch {
