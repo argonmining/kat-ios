@@ -2,14 +2,15 @@ import SwiftUI
 import Charts
 
 struct LineChartDS: View {
-
+    
     @Binding var chartData: [ChartData]?
     let showVerticalLabels: Bool
     let decimal: Int
     @State private var minValue: Double = 0
     @State private var maxValue: Double = 0
     @State private var delta: Double = 0
-
+    @State private var timeInterval: TimeInterval = 0
+    
     var body: some View {
         Group {
             if let tradeData = chartData {
@@ -41,8 +42,8 @@ struct LineChartDS: View {
                 }
                 .chartXAxis {
                     AxisMarks(values: .automatic) { value in
-                        if value.as(Date.self) != nil {
-                            AxisValueLabel(format: .dateTime.hour().minute())
+                        if let date = value.as(Date.self) {
+                            AxisValueLabel(format: xAxisFormat(for: date))
                         }
                         AxisTick()
                         AxisGridLine()
@@ -61,7 +62,7 @@ struct LineChartDS: View {
                         }
                     }
                 }
-                .chartYScale(domain: minValue-delta...maxValue+delta)
+                .chartYScale(domain: minValue - delta...maxValue + delta)
             } else {
                 VStack(alignment: .center) {
                     HStack {
@@ -73,22 +74,37 @@ struct LineChartDS: View {
             }
         }
         .onAppear {
-            guard let chartData else { return }
-            minValue = chartData.min(by: { $0.value < $1.value })?.value ?? 0
-            maxValue = chartData.max(by: { $0.value < $1.value })?.value ?? 0
-            delta = (maxValue - minValue) / 3
+            calculateBounds()
         }
-        .onChange(of: chartData) { _, newValue in
-            guard let newValue else { return }
-            minValue = newValue.min(by: { $0.value < $1.value })?.value ?? 0
-            maxValue = newValue.max(by: { $0.value < $1.value })?.value ?? 0
-            delta = (maxValue - minValue) / 3
+        .onChange(of: chartData) { _, _ in
+            calculateBounds()
+        }
+    }
+    
+    private func calculateBounds() {
+        guard let chartData else { return }
+        minValue = chartData.min(by: { $0.value < $1.value })?.value ?? 0
+        maxValue = chartData.max(by: { $0.value < $1.value })?.value ?? 0
+        delta = (maxValue - minValue) / 3
+        
+        if let first = chartData.first, let last = chartData.last {
+            timeInterval = last.timestamp - first.timestamp
+        }
+    }
+    
+    private func xAxisFormat(for date: Date) -> Date.FormatStyle {
+        if timeInterval < 86_400 { // Less than 1 day (24 hours * 60 * 60)
+            return .dateTime.hour().minute()
+        } else if timeInterval < 7 * 86_400 { // Less than 1 week
+            return .dateTime.weekday()
+        } else { // More than a week
+            return .dateTime.day().month().year()
         }
     }
 }
 
 extension LineChartDS {
-
+    
     struct ChartData: Identifiable, Hashable {
         let id: UUID
         let timestamp: Double

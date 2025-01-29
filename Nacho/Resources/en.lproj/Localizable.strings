@@ -73,6 +73,8 @@
 "kat_pool_blocks_24h" = "Blocks 24h";
 "kat_pool_miners_title" = "Miners";
 "kat_pool_hashrate_title" = "Hashrate";
+"kat_pool_payouts_title" = "Payouts";
+"kat_pool_recent_payouts_title" = "Recent Payouts";
 
 // NFTs
 "nfts_title" = "NFTs";

@@ -18,6 +18,7 @@ protocol NetworkServiceProvidable: AnyObject {
     func fetchKatPoolBlocks24() async throws -> PoolBlocks24h
     func fetchKatPoolMiners() async throws -> PoolMiners
     func fetchKatPoolHistory(range: Int) async throws -> [PoolHistoryValue]
+    func fetchKatPoolPayouts() async throws -> [PoolPayout]
 }
 
 // NetworkService implementation
@@ -254,6 +255,19 @@ final class NetworkService: NetworkServiceProvidable {
             throw NetworkError.somethingWentWrong
         }
     }
+
+    func fetchKatPoolPayouts() async throws -> [PoolPayout] {
+        let dataTask = AF.request(katPoolUrl + Endpoint.payouts.value)
+            .validate()
+            .serializingDecodable(DataResponseWrapper<[PoolPayout]>.self)
+        do {
+            let response = try await dataTask.value
+            return response.data
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
 }
 
 private extension NetworkService {
@@ -275,6 +289,7 @@ private extension NetworkService {
         case blocks24h
         case miners
         case poolHistory
+        case payouts
 
         var value: String {
             switch self {
@@ -293,6 +308,7 @@ private extension NetworkService {
             case .blocks24h: return "/blocks24h"
             case .miners: return "/minerTypes"
             case .poolHistory: return "/hashrate/history"
+            case .payouts: return "/payouts"
             }
         }
     }

@@ -57,34 +57,8 @@ struct KatPoolView: View {
                                 }
                             }
                         }
-
-                        WidgetDS {
-                            VStack {
-                                HStack {
-                                    Text(Localization.katPoolHashrateTitle)
-                                        .typography(.headline3, color: .textSecondary)
-                                    Spacer()
-                                    Picker("Time Period", selection: $viewModel.hashrateTimeInterval) {
-                                        Text("7d").tag(7)
-                                        Text("30d").tag(30)
-                                        Text("3m").tag(90)
-                                    }
-                                    .pickerStyle(SegmentedPickerStyle())
-                                    .frame(width: 140)
-                                    .onChange(of: viewModel.hashrateTimeInterval) { _, newValue in
-                                        Task {
-                                            await viewModel.fetchHashrateData()
-                                        }
-                                    }
-                                }
-                                LineChartDS(
-                                    chartData: $viewModel.hashrateChartData,
-                                    showVerticalLabels: true,
-                                    decimal: 0
-                                )
-                                .frame(height: 200)
-                            }
-                        }
+                        hashrateWidget
+                        payoutsWidget
                     } else {
                         EmptyStateDS(text: Localization.emptyViewText)
                             .padding(.top, Spacing.padding_10)
@@ -112,6 +86,100 @@ struct KatPoolView: View {
                 }
                 Text(value)
                     .typography(.numeric3)
+            }
+        }
+    }
+
+    private var hashrateWidget: some View {
+        WidgetDS {
+            VStack {
+                HStack {
+                    Text(Localization.katPoolHashrateTitle)
+                        .typography(.headline3, color: .textSecondary)
+                    Spacer()
+                    Picker("Time Period", selection: $viewModel.hashrateTimeInterval) {
+                        Text("7d").tag(7)
+                        Text("30d").tag(30)
+                        Text("3m").tag(90)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .frame(width: 140)
+                    .onChange(of: viewModel.hashrateTimeInterval) { _, newValue in
+                        Task {
+                            await viewModel.fetchHashrateData()
+                        }
+                    }
+                }
+                LineChartDS(
+                    chartData: $viewModel.hashrateChartData,
+                    showVerticalLabels: true,
+                    decimal: 0
+                )
+                .frame(height: 200)
+            }
+        }
+    }
+
+    private var payoutsWidget: some View {
+        WidgetDS {
+            VStack {
+                HStack {
+                    Text(Localization.katPoolPayoutsTitle)
+                        .typography(.headline3, color: .textSecondary)
+                    Spacer()
+                    Picker("Time Period", selection: $viewModel.payoutsTimeInterval) {
+                        Text("7d").tag(7)
+                        Text("30d").tag(30)
+                        Text("3m").tag(90)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .frame(width: 140)
+                    .onChange(of: viewModel.payoutsTimeInterval) { _, newValue in
+                        Task {
+                            await viewModel.fetchPayoutData()
+                        }
+                    }
+                }
+                LineChartDS(
+                    chartData: $viewModel.payoutChartData,
+                    showVerticalLabels: true,
+                    decimal: 0
+                )
+                .frame(height: 200)
+                if let latestPayouts = viewModel.latestPayouts {
+                    HStack {
+                        Text(Localization.katPoolRecentPayoutsTitle)
+                            .typography(.headline3, color: .textSecondary)
+                        Spacer()
+                    }
+                    .padding(.top, Spacing.padding_2)
+                    VStack(spacing: Spacing.padding_2) {
+                        ForEach(latestPayouts, id: \.self) { payout in
+                            VStack(spacing: Spacing.padding_1) {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        PillDS(
+                                            text: payout.walletAddress.trimmedInMiddle(toLength: 11, shiftStartBy: 6),
+                                            style: .medium,
+                                            color: .accentColor.opacity(0.7)
+                                        )
+                                        .onTapGesture {
+                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                            UIPasteboard.general.string = payout.walletAddress
+                                            Notifications.presentTopMessage(Localization.addressCopyMessage)
+                                        }
+                                        Text(Formatter.formatDateAndTime(payout.timestamp / 1000))
+                                            .typography(.caption)
+                                    }
+                                    Spacer()
+                                    Text(Formatter.formatToNumber(payout.amount) + " KAS")
+                                        .typography(.body1, color: .solidSuccess)
+                                }
+                                Divider()
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -69,6 +69,8 @@ enum Localization {
     static let katPoolBlocks24h = "kat_pool_blocks_24h".localized
     static let katPoolMinersTitle = "kat_pool_miners_title".localized
     static let katPoolHashrateTitle = "kat_pool_hashrate_title".localized
+    static let katPoolPayoutsTitle = "kat_pool_payouts_title".localized
+    static let katPoolRecentPayoutsTitle = "kat_pool_recent_payouts_title".localized
 
     // NFTs
     static let nftsTitle = "nfts_title".localized

@@ -232,4 +232,40 @@ final class MockNetworkService: NetworkServiceProvidable {
             PoolHistoryValue(timestamp: 1737498953.0, hashRate: 255225.97633716525)
         ]
     }
+
+    func fetchKatPoolPayouts() async throws -> [PoolPayout] {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return [
+            PoolPayout(
+                walletAddress: "kaspa:qqmvwmdq68a6tcv4taefqv7puavlnx0quakjfs5wumspa2cxqsvsw8gefe823",
+                amount: 5.79912864,
+                timestamp: 1738065600975,
+                transactionHash: "eb7373197c9cc3f94b78d8d08b9d444ccad5c8844ae332a3d061d0802f73b7bc"
+            ),
+            PoolPayout(
+                walletAddress: "kaspa:qqt26gdaa0vp6ne8jlkxsm5yjnhywq3cc6yepq8zvnjytnh6k7cx5kdwgmqgq",
+                amount: 29.41335274,
+                timestamp: 1738065600975,
+                transactionHash: "eb7373197c9cc3f94b78d8d08b9d444ccad5c8844ae332a3d061d0802f73b7bc"
+            ),
+            PoolPayout(
+                walletAddress: "kaspa:qypnw3h84jzkjmdxg5qa07kxznyrex4nnk2pakvhgkdn6htl3qa57ssvmjn409p",
+                amount: 6.25437828,
+                timestamp: 1738065600975,
+                transactionHash: "eb7373197c9cc3f94b78d8d08b9d444ccad5c8844ae332a3d061d0802f73b7bc"
+            ),
+            PoolPayout(
+                walletAddress: "kaspa:qyp0kz62ja9wavdvyrlts0vyu54guv77x0dh4ej4m6k8s3wpxm6dmnqez9jy6lg",
+                amount: 41.87942143,
+                timestamp: 1738065600975,
+                transactionHash: "eb7373197c9cc3f94b78d8d08b9d444ccad5c8844ae332a3d061d0802f73b7bc"
+            ),
+            PoolPayout(
+                walletAddress: "kaspa:qyp2ag4suam7ft8un8d7096rlve40d4hlmq0f45elgrdrzqvzfj8mnslj4pyytx",
+                amount: 284.22512623,
+                timestamp: 1738065600975,
+                transactionHash: "eb7373197c9cc3f94b78d8d08b9d444ccad5c8844ae332a3d061d0802f73b7bc"
+            )
+        ]
+    }
 }
