@@ -58,6 +58,18 @@ struct HomeView: View {
             .padding(Spacing.padding_2)
         }
         .navigationTitle(Localization.homeNavigationTitle)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+//                    viewModel.showFilter.toggle()
+                }) {
+                    Image(
+                        systemName: "wallet.bifold.fill"
+                    )
+                    .fontWeight(.medium)
+                }
+            }
+        }
         .background(
             Color.surfaceBackground
                 .ignoresSafeArea()

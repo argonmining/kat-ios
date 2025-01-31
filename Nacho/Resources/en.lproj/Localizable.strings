@@ -37,6 +37,9 @@
 // Home
 "home_navigation_title" = "Kat's Home";
 
+// Wallets
+"wallets_title" = "Wallets";
+
 // Widgets
 "widget_price_title" = "Price";
 "widget_mc_title" = "Market Cap";

@@ -33,6 +33,9 @@ enum Localization {
     // Home
     static let homeNavigationTitle = "home_navigation_title".localized
 
+    // Wallets
+    static let walletsTitle = "wallets_title".localized
+
     // Widgets
     static let widgetPriceTitle = "widget_price_title".localized
     static let widgetMCTitle = "widget_mc_title".localized
