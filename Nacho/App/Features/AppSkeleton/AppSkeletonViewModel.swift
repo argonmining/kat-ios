@@ -5,8 +5,10 @@ import Observation
 final class AppSkeletonViewModel {
 
     weak var networkService: NetworkServiceProvidable!
+    let dataProvider: DataProvidable
 
-    init(networkService: NetworkServiceProvidable) {
+    init(networkService: NetworkServiceProvidable, dataProvider: DataProvidable) {
         self.networkService = networkService
+        self.dataProvider = dataProvider
     }
 }

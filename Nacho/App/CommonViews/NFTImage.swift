@@ -14,7 +14,7 @@ struct NFTImage: View {
     }
 
     var body: some View {
-        asyncImage(index + ".png")
+        asyncImage(index)
     }
 
     @ViewBuilder

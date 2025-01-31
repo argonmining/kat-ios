@@ -60,7 +60,8 @@ struct AppSkeletonView: View {
                     NavigationStack {
                         NFTsView(
                             viewModel: NFTsViewModel(
-                                networkService: viewModel.networkService
+                                networkService: viewModel.networkService,
+                                dataProvider: viewModel.dataProvider
                             )
                         )
                     }
@@ -116,5 +117,8 @@ private extension AppSkeletonView {
 }
 
 #Preview {
-    AppSkeletonView(viewModel: AppSkeletonViewModel(networkService: MockNetworkService()))
+    AppSkeletonView(viewModel: AppSkeletonViewModel(
+        networkService: MockNetworkService(),
+        dataProvider: MockDataProvider())
+    )
 }

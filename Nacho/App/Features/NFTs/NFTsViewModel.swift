@@ -6,22 +6,51 @@ final class NFTsViewModel {
 
     var isCollectionLoading: Bool = false
     var isNFTsLoading: Bool = false
+    var isSortingSelected = false
     var collectionInfo: NFTCollectionInfo?
     var nfts: [NFTInfo] = []
+    var nftInfoModels: [NFTInfoModel] = []
+    var filteredNFTs: [NFTInfoModel] = []
     var showGame: Bool = false
+    var searchText: String = ""
     var memoryGameViewModel: MemoryGameViewModel?
+    private var loadedNFTsSet: Set<Int> = []
     private var currentIndex = 0
     private let networkService: NetworkServiceProvidable
+    private let dataProvider: DataProvidable
 
-    init(networkService: NetworkServiceProvidable) {
+    init(networkService: NetworkServiceProvidable, dataProvider: DataProvidable) {
         self.networkService = networkService
+        self.dataProvider = dataProvider
         memoryGameViewModel = MemoryGameViewModel(images: ["nft1", "nft2", "nft3", "nft4", "nft5", "nft6"])
+        loadNFTsFromStorage()
+    }
+
+    func sortNFTs() {
+        if isSortingSelected {
+            isSortingSelected = false
+            nftInfoModels.sort { $0.edition < $1.edition }
+        } else {
+            isSortingSelected = true
+            nftInfoModels.sort { $0.overallRarityPosition < $1.overallRarityPosition }
+        }
+        filteredNFTs = nftInfoModels
+    }
+
+    func filterNFTs() {
+        guard !searchText.isEmpty else {
+            filteredNFTs = nftInfoModels
+            return
+        }
+        filteredNFTs = nftInfoModels.filter {
+            $0.name.lowercased().contains(searchText.lowercased())
+        }
     }
 
     func fetchNachoCollection() async {
         isCollectionLoading = true
         do {
-            let collectionInfo = try await networkService.fetchNFTCollectionInfo(ticker: "NKTTWO")
+            let collectionInfo = try await networkService.fetchNFTCollectionInfo(ticker: "NACHO")
             await MainActor.run {
                 isCollectionLoading = false
                 self.collectionInfo = collectionInfo
@@ -37,37 +66,79 @@ final class NFTsViewModel {
         guard
             let limit = collectionInfo?.max,
             limit > 0,
-            currentIndex == 0,
             let hash = collectionInfo?.buri.components(separatedBy: "://").last,
             !hash.isEmpty
         else { return }
 
         isNFTsLoading = true
-        await withTaskGroup(of: NFTInfo?.self) { taskGroup in
-            for i in 1...limit {
-                taskGroup.addTask {
-                    do {
-                        return try await self.networkService.fetchNFTInfo(hash: hash, index: i)
-                    } catch {
-                        print("Failed to fetch NFT for index \(i): \(error)")
-                        return nil
+        let batchSize = 1000
+        let minCountForDelay = batchSize / 2
+
+        while currentIndex < limit {
+            var requestsCount = 0
+            await withTaskGroup(of: NFTInfo?.self) { taskGroup in
+                let endIndex = min(currentIndex + batchSize, limit)
+
+                for i in currentIndex+1...endIndex {
+                    guard !loadedNFTsSet.contains(i) else {
+                        self.currentIndex += 1
+                        continue
+                    }
+                    taskGroup.addTask {
+                        do {
+                            return try await self.networkService.fetchNFTInfo(hash: "NACHO", index: i)
+                        } catch {
+                            print("Failed to fetch NFT for index \(i): \(error)")
+                            return nil
+                        }
                     }
                 }
-            }
 
-            for await result in taskGroup {
-                if var nft = result {
+                for await result in taskGroup {
+                    if var nft = result {
+                        nft.image = "/NACHO/" + String(nft.edition)
+                        self.nfts.append(nft)
+                    }
                     self.currentIndex += 1
-                    nft.image = String(nft.edition)
-                    self.nfts.append(nft)
+                    requestsCount += 1
                 }
             }
 
+            // Sort after each batch
             self.nfts.sort { $0.edition < $1.edition }
-            self.isNFTsLoading = false
-            self.groupNFTs()
+
+            if currentIndex < limit && requestsCount >= minCountForDelay {
+                print("Batch completed, waiting 1 second before next batch...")
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+            }
+        }
+
+        self.groupNFTs()
+    }
+
+    private func loadNFTsFromStorage() {
+        do {
+            nftInfoModels = try dataProvider.getNFTs()
+            for item in nftInfoModels {
+                loadedNFTsSet.insert(item.edition)
+                nfts.append(
+                    .init(
+                        name: item.name,
+                        description: "",
+                        image: item.image,
+                        edition: item.edition,
+                        attributes: item.attributes
+                    )
+                )
+            }
+            print("--- 1 ---")
+            print(nftInfoModels.count)
+        } catch {
+            print(error)
         }
     }
+
+    
 
     private func fetchNFTInfo(hash: String, index: Int) async {
         guard index > currentIndex else { return }
@@ -84,46 +155,105 @@ final class NFTsViewModel {
     }
 
     private func groupNFTs() {
-        var heads: Set<String> = []
-        var faces: Set<String> = []
-        var moods: Set<String> = []
-        var collars: Set<String> = []
-        var outfits: Set<String> = []
-        var roles: Set<String> = []
-        var tails: Set<String> = []
-        var backgrounds: Set<String> = []
-        var groupedNFTs: [String: [NFTInfo]] = [:]
+        defer {
+            isNFTsLoading = false
+        }
+        guard !nfts.isEmpty else { return }
+
+        var traitCounts: [String: Int] = [:]
+        var visualTraitCounts: [String: Int] = [:]
+        let totalNFTs = Double(nfts.count)
+
+        let excludedVisualTraits: Set<String> = ["Realm", "Type", "Role"]
+
+        // Count occurrences of each trait
+        for nft in nfts {
+            for attr in nft.attributes {
+                let key = "\(attr.traitType)-\(attr.value)"
+                traitCounts[key, default: 0] += 1
+                
+                if !excludedVisualTraits.contains(attr.traitType) {
+                    visualTraitCounts[key, default: 0] += 1
+                }
+            }
+        }
+
+        // Generate NFTInfoModel list with rarity calculations
+        var nftModels: [NFTInfoModel] = []
 
         for nft in nfts {
-            if let head = NFTStyleItem.head.style(from: nft.attributes) {
-                heads.insert(head)
+            guard !loadedNFTsSet.contains(nft.edition) else { continue }
+
+            var overallRarity: Double = 0
+            var visualRarity: Double = 0
+
+            for attr in nft.attributes {
+                let key = "\(attr.traitType)-\(attr.value)"
+
+                // Rarity calculation: Frequency-based (lower frequency = rarer)
+                if let count = traitCounts[key] {
+                    let rarityScore = 1.0 / (Double(count) / totalNFTs)
+                    overallRarity += rarityScore
+                }
+
+                if !excludedVisualTraits.contains(attr.traitType),
+                   let count = visualTraitCounts[key] {
+                    let rarityScore = 1.0 / (Double(count) / totalNFTs)
+                    visualRarity += rarityScore
+                }
             }
-            if let face = NFTStyleItem.face.style(from: nft.attributes) {
-                faces.insert(face)
+
+            let model = NFTInfoModel(
+                name: nft.name,
+                image: nft.image,
+                edition: nft.edition,
+                attributes: nft.attributes,
+                visualRarity: visualRarity,
+                overallRarity: overallRarity,
+                visualRarityPosition: 0,
+                overallRarityPosition: 0
+            )
+            nftModels.append(model)
+            nftInfoModels.append(model)
+            do {
+                try dataProvider.set(nftInfo: model)
+            } catch {
+                print(error.localizedDescription)
             }
-            if let mood = NFTStyleItem.mood.style(from: nft.attributes) {
-                moods.insert(mood)
-            }
-            if let collar = NFTStyleItem.collar.style(from: nft.attributes) {
-                collars.insert(collar)
-            }
-            if let outfit = NFTStyleItem.outfit.style(from: nft.attributes) {
-                outfits.insert(outfit)
-            }
-            if let role = NFTStyleItem.role.style(from: nft.attributes) {
-                roles.insert(role)
-            }
-            if let tail = NFTStyleItem.tail.style(from: nft.attributes) {
-                tails.insert(tail)
-            }
-            if let background = NFTStyleItem.background.style(from: nft.attributes) {
-                backgrounds.insert(background)
-            }
-            let id = NFTStyleItem.imageUniqueId(from: nft.attributes)
-            if groupedNFTs[id] == nil {
-                groupedNFTs[id] = [nft]
-            } else {
-                groupedNFTs[id]?.append(nft)
+        }
+
+        filteredNFTs = nftInfoModels
+
+        guard !nftModels.isEmpty else { return }
+
+        sortByRarity()
+        
+        print("--- 2 ---")
+        print(nftModels.count)
+
+//        // Sort NFTs by overall rarity (descending)
+//        nftModels.sort { $0.visualRarity > $1.visualRarity }
+
+        // Store or update your NFT models as needed
+        print("DONE")
+    }
+
+    private func sortByRarity() {
+        nftInfoModels.sort { $0.visualRarity > $1.visualRarity }
+        for i in 0..<nftInfoModels.count {
+            nftInfoModels[i].visualRarityPosition = i + 1
+        }
+
+        nftInfoModels.sort { $0.overallRarity > $1.overallRarity }
+        for i in 0..<nftInfoModels.count {
+            nftInfoModels[i].overallRarityPosition = i + 1
+        }
+
+        for model in nftInfoModels {
+            do {
+                try dataProvider.set(nftInfo: model)
+            } catch {
+                print(error.localizedDescription)
             }
         }
     }

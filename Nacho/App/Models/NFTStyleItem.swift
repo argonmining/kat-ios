@@ -4,9 +4,11 @@ enum NFTStyleItem: String {
     case mood = "Mood"
     case collar = "Collar"
     case outfit = "Outfit"
-    case role = "Role"
     case tail = "Tail"
-    case background = "Background"
+    case base = "Base"
+    case role = "Role"
+    case type = "Type"
+    case realm = "Realm"
 
     func style(from array: [NFTAttribute]) -> String? {
         for item in array {
@@ -35,7 +37,10 @@ enum NFTStyleItem: String {
             NFTStyleItem.collar,
             NFTStyleItem.outfit,
             NFTStyleItem.tail,
-            NFTStyleItem.background
+            NFTStyleItem.base,
+            NFTStyleItem.role,
+            NFTStyleItem.type,
+            NFTStyleItem.realm
         ].forEach {
             if let value = value(style: $0) {
                 result += value

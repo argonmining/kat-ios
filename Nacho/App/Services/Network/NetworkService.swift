@@ -29,6 +29,7 @@ final class NetworkService: NetworkServiceProvidable {
     private let kasplexBaseURL = Constants.kasplexBaseUrl
     private let kaspaOrgBaseURL = Constants.kaspaOrgBaseUrl
     private let nftUrl = Constants.nftKatscanUrl
+    private let nftCacheUrl = Constants.nftCachUrl
     private let katPoolUrl = Constants.katPoolUrl
 
     func fetchTokenList() async throws -> [TokenDeployInfo] {
@@ -186,7 +187,7 @@ final class NetworkService: NetworkServiceProvidable {
     }
 
     func fetchNFTInfo(hash: String, index: Int) async throws -> NFTInfo {
-        let dataTask = AF.request(nftUrl + Endpoint.nftInfo(hash, index).value)
+        let dataTask = AF.request(nftCacheUrl + Endpoint.nftInfo(hash, index).value)
             .validate()
             .serializingDecodable(NFTInfo.self)
 
@@ -302,8 +303,8 @@ private extension NetworkService {
             case .addressTokenList(let address): return "/krc20/address/\(address)/tokenlist"
             case .addressBalance(let address): return "/addresses/\(address)/balance"
             case .kasplexInfo: return "/info"
-            case .nftCollection(let ticker): return "/krc721/nfts/\(ticker)"
-            case .nftInfo(let hash, let index): return "/ipfs/\(hash)/\(index).json"
+            case .nftCollection(let ticker): return "/nfts/\(ticker)"
+            case .nftInfo(let ticker, let index): return "/metadata/\(ticker)/\(index)"
             case .blocks: return "/blocks"
             case .blocks24h: return "/blocks24h"
             case .miners: return "/minerTypes"

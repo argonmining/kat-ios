@@ -5,7 +5,7 @@ struct NFTsView: View {
 
     @State var viewModel: NFTsViewModel
 
-    @State private var selectedNFT: NFTInfo? = nil
+    @State private var selectedNFT: NFTInfoModel? = nil
     @State private var isDetailViewVisible: Bool = false
     @Namespace private var namespace
     
@@ -28,6 +28,13 @@ struct NFTsView: View {
                 await viewModel.fetchNachoCollection()
                 await viewModel.batchFetchNFTs()
             }
+            .searchable(
+                text: $viewModel.searchText,
+                prompt: "Search for NFT Number"
+            )
+            .onChange(of: viewModel.searchText) {
+                viewModel.filterNFTs()
+            }
 
             // Detail View
             if let selectedNFT = selectedNFT, isDetailViewVisible {
@@ -41,7 +48,7 @@ struct NFTsView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: {
                     viewModel.showGame.toggle()
                 }) {
@@ -57,6 +64,17 @@ struct NFTsView: View {
                     } else {
                         EmptyView()
                     }
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    viewModel.sortNFTs()
+                }) {
+                    Image(
+                        systemName: viewModel.isSortingSelected
+                        ? "arrow.up.arrow.down.circle.fill"
+                        : "arrow.up.arrow.down.circle"
+                    )
                 }
             }
         }
@@ -97,8 +115,8 @@ struct NFTsView: View {
                 count: 3
             )
             LazyVGrid(columns: columns, spacing: Spacing.padding_1) {
-                ForEach(Array(viewModel.nfts.enumerated()), id: \.offset) { _, nft in
-                    NFTImage(index: nft.image)
+                ForEach(Array(viewModel.filteredNFTs.enumerated()), id: \.offset) { _, nft in
+                    NFTImage(index: nft.image, isCache: true)
                         .matchedGeometryEffect(id: nft.image, in: namespace)
                         .onTapGesture {
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -199,103 +217,11 @@ struct NFTsView: View {
     }
 }
 
-struct NFTDetailView: View {
-
-    let nft: NFTInfo
-    @Binding var isVisible: Bool
-    let namespace: Namespace.ID
-    var onDismiss: () -> Void
-
-    var body: some View {
-        ZStack {
-            if let style = NFTStyleItem.background.style(from: nft.attributes), style == "Rainstorm" {
-                VortexView(.rain) {
-                    Circle()
-                        .fill(.white)
-                        .frame(width: 16)
-                        .tag("circle")
-                }
-                VortexView(.splash) {
-                    Circle()
-                        .fill(.white)
-                        .frame(width: 16)
-                        .tag("circle")
-                }
-            } else if let style = NFTStyleItem.background.style(from: nft.attributes), style == "Volcano" {
-                VortexView(.smoke) {
-                    Circle()
-                        .fill(.white)
-                        .frame(width: 64)
-                        .tag("circle")
-                }
-                .offset(y: -200)
-            } else if let style = NFTStyleItem.background.style(from: nft.attributes), style == "Snowy Tundra" {
-                VortexView(.snow) {
-                    Circle()
-                        .fill(.white)
-                        .frame(width: 16)
-                        .tag("circle")
-                }
-            }
-            Color.surfaceBackground.opacity(0.5)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        isVisible = false
-                        onDismiss()
-                    }
-                }
-            VStack(spacing: Spacing.padding_1) {
-                Spacer()
-                NFTImage(index: nft.image)
-                    .matchedGeometryEffect(id: nft.image, in: namespace)
-                    .frame(width: 280)
-                Text(nft.name)
-                    .typography(.headline3)
-                Text(nft.description)
-                    .typography(.body1)
-                VStack(alignment: .leading) {
-                    let columns = Array(
-                        repeating: GridItem(
-                            .flexible(),
-                            spacing: Spacing.padding_1
-                        ),
-                        count: 2
-                    )
-                    LazyVGrid(columns: columns, spacing: Spacing.padding_1) {
-                        ForEach(nft.attributes, id: \.self) { attribute in
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Text(attribute.traitType)
-                                        .typography(.subtitle, color: .textSecondary)
-                                        .multilineTextAlignment(.leading)
-                                    Spacer()
-                                }
-                                HStack {
-                                    Text(attribute.value)
-                                        .typography(.body2)
-                                        .multilineTextAlignment(.leading)
-                                    Spacer()
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                    }
-                }
-                .padding(Spacing.padding_2)
-                .background(
-                    RoundedRectangle(cornerRadius: Radius.radius_3)
-                        .fill(Material.regular.opacity(0.9))
-                )
-                .padding(.horizontal, Spacing.padding_6)
-                Spacer()
-            }
-        }
-    }
-}
-
 #Preview {
     NavigationView {
-        NFTsView(viewModel: NFTsViewModel(networkService: MockNetworkService()))
+        NFTsView(viewModel: NFTsViewModel(
+            networkService: MockNetworkService(),
+            dataProvider: MockDataProvider())
+        )
     }
 }
