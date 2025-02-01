@@ -26,7 +26,6 @@ struct NFTsView: View {
             .background(Color.surfaceBackground.ignoresSafeArea())
             .task {
                 await viewModel.fetchNachoCollection()
-                await viewModel.batchFetchNFTs()
             }
             .searchable(
                 text: $viewModel.searchText,

@@ -6,7 +6,7 @@ final class NFTsViewModel {
 
     var isCollectionLoading: Bool = false
     var isNFTsLoading: Bool = false
-    var isSortingSelected = false
+    var isSortingSelected = true
     var collectionInfo: NFTCollectionInfo?
     var nfts: [NFTInfo] = []
     var nftInfoModels: [NFTInfoModel] = []
@@ -20,10 +20,10 @@ final class NFTsViewModel {
     private let dataProvider: DataProvidable
 
     init(networkService: NetworkServiceProvidable, dataProvider: DataProvidable) {
+        print("INIT NFT MODEL")
         self.networkService = networkService
         self.dataProvider = dataProvider
         memoryGameViewModel = MemoryGameViewModel(images: ["nft1", "nft2", "nft3", "nft4", "nft5", "nft6"])
-        loadNFTsFromStorage()
     }
 
     func sortNFTs() {
@@ -43,14 +43,22 @@ final class NFTsViewModel {
             return
         }
         filteredNFTs = nftInfoModels.filter {
-            $0.name.lowercased().contains(searchText.lowercased())
+            String($0.edition) == searchText.lowercased()
         }
     }
 
     func fetchNachoCollection() async {
+        guard filteredNFTs.isEmpty else { return }
         isCollectionLoading = true
         do {
             let collectionInfo = try await networkService.fetchNFTCollectionInfo(ticker: "NACHO")
+            await loadNFTsFromStorage()
+            if nftInfoModels.count < collectionInfo.max {
+                Notifications.presentTopMessage("⌛ We are fetching more Nacho NFTs, it might take a while, please stay on the current Tab and don't close the app", duration: 7)
+                await batchFetchNFTs(collectionInfo: collectionInfo)
+            } else {
+                filteredNFTs = nftInfoModels
+            }
             await MainActor.run {
                 isCollectionLoading = false
                 self.collectionInfo = collectionInfo
@@ -62,11 +70,11 @@ final class NFTsViewModel {
         }
     }
 
-    func batchFetchNFTs() async {
+    private func batchFetchNFTs(collectionInfo: NFTCollectionInfo) async {
+        let limit = collectionInfo.max
         guard
-            let limit = collectionInfo?.max,
             limit > 0,
-            let hash = collectionInfo?.buri.components(separatedBy: "://").last,
+            let hash = collectionInfo.buri.components(separatedBy: "://").last,
             !hash.isEmpty
         else { return }
 
@@ -94,6 +102,7 @@ final class NFTsViewModel {
                     }
                 }
 
+                
                 for await result in taskGroup {
                     if var nft = result {
                         nft.image = "/NACHO/" + String(nft.edition)
@@ -104,21 +113,20 @@ final class NFTsViewModel {
                 }
             }
 
-            // Sort after each batch
-            self.nfts.sort { $0.edition < $1.edition }
-
             if currentIndex < limit && requestsCount >= minCountForDelay {
                 print("Batch completed, waiting 1 second before next batch...")
-                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
             }
         }
 
-        self.groupNFTs()
+        Task {
+            await self.groupNFTs()
+        }
     }
 
-    private func loadNFTsFromStorage() {
+    private func loadNFTsFromStorage() async {
         do {
-            nftInfoModels = try dataProvider.getNFTs()
+            nftInfoModels = try await dataProvider.getNFTs()
             for item in nftInfoModels {
                 loadedNFTsSet.insert(item.edition)
                 nfts.append(
@@ -154,7 +162,7 @@ final class NFTsViewModel {
         }
     }
 
-    private func groupNFTs() {
+    private func groupNFTs() async {
         defer {
             isNFTsLoading = false
         }
@@ -177,9 +185,6 @@ final class NFTsViewModel {
                 }
             }
         }
-
-        // Generate NFTInfoModel list with rarity calculations
-        var nftModels: [NFTInfoModel] = []
 
         for nft in nfts {
             guard !loadedNFTsSet.contains(nft.edition) else { continue }
@@ -213,32 +218,13 @@ final class NFTsViewModel {
                 visualRarityPosition: 0,
                 overallRarityPosition: 0
             )
-            nftModels.append(model)
             nftInfoModels.append(model)
-            do {
-                try dataProvider.set(nftInfo: model)
-            } catch {
-                print(error.localizedDescription)
-            }
         }
 
-        filteredNFTs = nftInfoModels
-
-        guard !nftModels.isEmpty else { return }
-
-        sortByRarity()
-        
-        print("--- 2 ---")
-        print(nftModels.count)
-
-//        // Sort NFTs by overall rarity (descending)
-//        nftModels.sort { $0.visualRarity > $1.visualRarity }
-
-        // Store or update your NFT models as needed
-        print("DONE")
+        await sortByRarity()
     }
 
-    private func sortByRarity() {
+    private func sortByRarity() async {
         nftInfoModels.sort { $0.visualRarity > $1.visualRarity }
         for i in 0..<nftInfoModels.count {
             nftInfoModels[i].visualRarityPosition = i + 1
@@ -251,10 +237,13 @@ final class NFTsViewModel {
 
         for model in nftInfoModels {
             do {
-                try dataProvider.set(nftInfo: model)
+                try await self.dataProvider.set(nftInfo: model)
             } catch {
+                print(" --- ERROR ---")
                 print(error.localizedDescription)
             }
         }
+
+        filteredNFTs = nftInfoModels
     }
 }

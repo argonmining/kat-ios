@@ -89,7 +89,7 @@ final class AddressInfoViewModel {
             }
         }
         print(address.count)
-        let lengthIsValid = address.count == 67
+        let lengthIsValid = (address.count >= 59 && address.count <= 79)
         return lengthIsValid
     }
 }

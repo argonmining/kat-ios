@@ -14,7 +14,7 @@ struct AppSkeletonView: View {
                 TabView(selection: $selectedTab) {
                     NavigationStack {
                         HomeView(
-                            viewModel: HomeViewModel(networkService: viewModel.networkService),
+                            viewModel: viewModel.homeViewModel,
                             namespace: animationNamespace
                         )
                     }
@@ -28,11 +28,7 @@ struct AppSkeletonView: View {
                     .transition(.opacity)
 
                     NavigationStack {
-                        KatScanView(
-                            viewModel: KatScanViewModel(
-                                networkService: viewModel.networkService
-                            )
-                        )
+                        KatScanView(viewModel: viewModel.katScanViewModel)
                     }
                     .tabItem {
                         Label(
@@ -43,11 +39,7 @@ struct AppSkeletonView: View {
                     .tag(TabType.katScan)
 
                     NavigationStack {
-                        KatPoolView(
-                            viewModel: KatPoolViewModel(
-                                networkService: viewModel.networkService
-                            )
-                        )
+                        KatPoolView(viewModel: viewModel.katPoolViewModel)
                     }
                     .tabItem {
                         Label(
@@ -58,12 +50,7 @@ struct AppSkeletonView: View {
                     .tag(TabType.katPool)
 
                     NavigationStack {
-                        NFTsView(
-                            viewModel: NFTsViewModel(
-                                networkService: viewModel.networkService,
-                                dataProvider: viewModel.dataProvider
-                            )
-                        )
+                        NFTsView(viewModel: viewModel.nftsViewModel)
                     }
                     .tabItem {
                         Label(

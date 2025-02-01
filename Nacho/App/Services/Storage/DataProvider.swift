@@ -1,19 +1,16 @@
 import SwiftData
 
 protocol DataProvidable: AnyObject {
-    func getNFTs() throws -> [NFTInfoModel]
-    func set(nftInfo: NFTInfoModel) throws
-    func set(nftInfos: [NFTInfoModel]) throws
+    func getNFTs() async throws -> [NFTInfoModel]
+    func set(nftInfo: NFTInfoModel) async throws
+    func set(nftInfos: [NFTInfoModel]) async throws
 }
 
-class DataProvider: DataProvidable {
+@ModelActor
+final actor DataProvider: DataProvidable, Sendable {
 
-    private var context: ModelContext
-
-    init(context: ModelContext) {
-        self.context = context
-    }
-
+    private var context: ModelContext { modelExecutor.modelContext }
+    
     func getNFTs() throws -> [NFTInfoModel] {
         return try context.fetch(FetchDescriptor<NFTInfoModel>())
     }
@@ -25,7 +22,8 @@ class DataProvider: DataProvidable {
 
     func set(nftInfos: [NFTInfoModel]) throws {
         for item in nftInfos {
-            try set(nftInfo: item)
+            context.insert(item)
         }
+        try context.save()
     }
 }
