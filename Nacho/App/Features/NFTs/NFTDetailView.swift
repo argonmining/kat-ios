@@ -3,14 +3,14 @@ import Vortex
 
 struct NFTDetailView: View {
 
-    let nft: NFTInfoModel
+    let nft: NFTData
     @Binding var isVisible: Bool
     let namespace: Namespace.ID
     var onDismiss: () -> Void
 
     var body: some View {
         ZStack {
-            if let style = NFTStyleItem.base.style(from: nft.attributes), style == "Rainstorm" {
+            if let style = NFTStyleItem.base.style(from: nft.rarity.traitBreakdown), style == "Rainstorm" {
                 VortexView(.rain) {
                     Circle()
                         .fill(.white)
@@ -23,7 +23,7 @@ struct NFTDetailView: View {
                         .frame(width: 16)
                         .tag("circle")
                 }
-            } else if let style = NFTStyleItem.base.style(from: nft.attributes), style == "Volcano" {
+            } else if let style = NFTStyleItem.base.style(from: nft.rarity.traitBreakdown), style == "Volcano" {
                 VortexView(.smoke) {
                     Circle()
                         .fill(.white)
@@ -31,11 +31,19 @@ struct NFTDetailView: View {
                         .tag("circle")
                 }
                 .offset(y: -200)
-            } else if let style = NFTStyleItem.base.style(from: nft.attributes), style == "Snowy Tundra" {
+            } else if let style = NFTStyleItem.base.style(from: nft.rarity.traitBreakdown), style == "Snowy Tundra" {
                 VortexView(.snow) {
                     Circle()
                         .fill(.white)
                         .frame(width: 16)
+                        .tag("circle")
+                }
+            } else if let style = NFTStyleItem.base.style(from: nft.rarity.traitBreakdown), style == "Fireworks" {
+                VortexView(.fireworks) {
+                    Circle()
+                        .fill(.accent)
+                        .blendMode(.plusLighter)
+                        .frame(width: 24)
                         .tag("circle")
                 }
             }
@@ -63,7 +71,7 @@ struct NFTDetailView: View {
                         count: 2
                     )
                     LazyVGrid(columns: columns, spacing: Spacing.padding_1) {
-                        ForEach(nft.attributes, id: \.self) { attribute in
+                        ForEach(nft.rarity.traitBreakdown, id: \.self) { attribute in
                             VStack(alignment: .leading) {
                                 HStack {
                                     Text(attribute.traitType)
@@ -75,6 +83,8 @@ struct NFTDetailView: View {
                                     Text(attribute.value)
                                         .typography(.body2)
                                         .multilineTextAlignment(.leading)
+                                    Text(Formatter.formatPercentage(attribute.percentage))
+                                        .typography(.body2, color: .textSecondary)
                                     Spacer()
                                 }
                             }
@@ -85,13 +95,13 @@ struct NFTDetailView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             HStack {
-                                Text("Overall Rarity")
+                                Text("Rarity Rank")
                                     .typography(.subtitle, color: .textSecondary)
                                     .multilineTextAlignment(.leading)
                                 Spacer()
                             }
                             HStack {
-                                Text("\(nft.overallRarityPosition)")
+                                Text("\(nft.rarity.rank)")
                                     .typography(.subtitle)
                                     .multilineTextAlignment(.leading)
                                 Spacer()
@@ -100,13 +110,13 @@ struct NFTDetailView: View {
                         .frame(maxWidth: .infinity)
                         VStack(alignment: .leading) {
                             HStack {
-                                Text("Visual Rarity")
+                                Text("Rarity Tier")
                                     .typography(.subtitle, color: .textSecondary)
                                     .multilineTextAlignment(.leading)
                                 Spacer()
                             }
                             HStack {
-                                Text("\(nft.visualRarityPosition)")
+                                Text(nft.rarity.rarityTier)
                                     .typography(.subtitle)
                                     .multilineTextAlignment(.leading)
                                 Spacer()
@@ -132,14 +142,17 @@ struct NFTDetailView: View {
     
     NFTDetailView(
         nft: .init(
-            name: "Test NFT #1",
+            name: "NACHO #1",
             image: "/NACHO/1",
             edition: 1,
-            attributes: [],
-            visualRarity: 1000,
-            overallRarity: 11000,
-            visualRarityPosition: 3,
-            overallRarityPosition: 5
+            rarity: .init(
+                rarityScore: 99,
+                rarityMetrics: .init(statisticalRarity: 1, traitRarity: 1, weightedAverage: 1),
+                isSpecial: false,
+                rarityTier: "Something",
+                rank: 1,
+                traitBreakdown: []
+            )
         ),
         isVisible: .constant(true),
         namespace: namespace,

@@ -5,7 +5,7 @@ struct NFTsView: View {
 
     @State var viewModel: NFTsViewModel
 
-    @State private var selectedNFT: NFTInfoModel? = nil
+    @State private var selectedNFT: NFTData? = nil
     @State private var isDetailViewVisible: Bool = false
     @Namespace private var namespace
     
@@ -114,7 +114,7 @@ struct NFTsView: View {
                 count: 3
             )
             LazyVGrid(columns: columns, spacing: Spacing.padding_1) {
-                ForEach(Array(viewModel.filteredNFTs.enumerated()), id: \.offset) { _, nft in
+                ForEach(Array(viewModel.filteredNfts.enumerated()), id: \.offset) { _, nft in
                     NFTImage(index: nft.image, isCache: true)
                         .matchedGeometryEffect(id: nft.image, in: namespace)
                         .onTapGesture {
