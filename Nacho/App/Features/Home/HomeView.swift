@@ -61,12 +61,17 @@ struct HomeView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-//                    viewModel.showFilter.toggle()
+                    viewModel.walletPresented = true
                 }) {
                     Image(
                         systemName: "wallet.bifold.fill"
                     )
                     .fontWeight(.medium)
+                }
+                .fullScreenCover(isPresented: $viewModel.walletPresented) {
+                    NavigationView {
+                        WalletsView(viewModel: .init(dataProvider: viewModel.dataProvider))
+                    }
                 }
             }
         }
@@ -98,7 +103,10 @@ struct HomeView: View {
     @Previewable @Namespace var namespace
     NavigationStack {
         HomeView(
-            viewModel: HomeViewModel(networkService: MockNetworkService()),
+            viewModel: HomeViewModel(
+                networkService: MockNetworkService(),
+                dataProvider: MockDataProvider()
+            ),
             namespace: namespace
         )
     }

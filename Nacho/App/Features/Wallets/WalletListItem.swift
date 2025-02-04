@@ -14,31 +14,51 @@ struct WalletListItem: View {
                     .typography(.body1)
                 Spacer()
                 Button(action: {
-                    
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    UIPasteboard.general.string = addressModel.address
+                    Notifications.presentTopMessage(Localization.addressCopyMessage)
                 }) {
                     Image(systemName: "document.on.document")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 20)
                         .foregroundColor(.accentColor)
                 }
+                .buttonStyle(.plain)
             }
+            .contentShape(Rectangle())
             .padding(.horizontal, Spacing.padding_2)
             HStack(spacing: Spacing.padding_1) {
                 if addressModel.contentTypes.contains(.tokens) {
-                    PillDS(text: "Tokens", style: .medium)
+                    PillDS(
+                        text: Localization.walletsTagsTokens,
+                        style: .medium
+                    )
                 }
                 if addressModel.contentTypes.contains(.nfts) {
-                    PillDS(text: "NFTs", style: .medium, color: .solidWarning)
+                    PillDS(
+                        text: Localization.walletsTagsNfts,
+                        style: .medium,
+                        color: .solidWarning
+                    )
                 }
                 if addressModel.contentTypes.contains(.miners) {
-                    PillDS(text: "Miner", style: .medium, color: .solidInfo)
+                    PillDS(
+                        text: Localization.walletsTagsMiners,
+                        style: .medium,
+                        color: .solidInfo
+                    )
                 }
                 if addressModel.contentTypes.contains(.none) || addressModel.contentTypes.isEmpty {
-                    PillDS(text: "Nothing is selected", style: .medium, color: .solidDanger)
+                    PillDS(
+                        text: Localization.walletsTagsNone,
+                        style: .medium,
+                        color: .solidDanger
+                    )
                 }
                 Spacer()
             }
             .padding(.leading, Spacing.padding_2 + Size.iconSmall + Spacing.padding_1)
-//            Divider()
-//                .padding(.leading, Spacing.padding_2 + Size.iconSmall + Spacing.padding_1)
         }
         .padding(.top, Spacing.padding_1_5)
     }

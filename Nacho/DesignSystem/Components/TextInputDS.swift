@@ -41,6 +41,9 @@ struct TextInputDS: View {
                     action?()
                 }) {
                     Image(systemName: actionIcon!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 20)
                         .foregroundColor(Color.accentColor)
                 }
                 

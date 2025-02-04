@@ -18,8 +18,7 @@ final class AppCoordinator {
 
     @MainActor
     private func setUpView() {
-        print("SET UP CORE DATA")
-        guard let modelContainer = try? ModelContainer(for: NFTInfoModel.self) else {
+        guard let modelContainer = try? ModelContainer(for: NFTInfoModel.self, AddressModel.self) else {
             print("Error: Failed to initialize CoreData")
             return
         }

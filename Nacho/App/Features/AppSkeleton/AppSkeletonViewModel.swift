@@ -10,8 +10,10 @@ final class AppSkeletonViewModel {
     let nftsViewModel: NFTsViewModel
 
     init(networkService: NetworkServiceProvidable, dataProvider: DataProvidable) {
-        print("APP SKELETON INIT")
-        homeViewModel = HomeViewModel(networkService: networkService)
+        homeViewModel = HomeViewModel(
+            networkService: networkService,
+            dataProvider: dataProvider
+        )
         katScanViewModel = KatScanViewModel(networkService: networkService)
         katPoolViewModel = KatPoolViewModel(networkService: networkService)
         nftsViewModel = NFTsViewModel(

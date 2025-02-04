@@ -8,11 +8,14 @@ final class HomeViewModel {
     var chartData: [LineChartDS.ChartData]? = nil
     var holders: [HolderInfo]? = nil
     var showHolders: Bool = true
+    var walletPresented: Bool = false
 
+    let dataProvider: DataProvidable
     private let networkService: NetworkServiceProvidable
 
-    init(networkService: NetworkServiceProvidable) {
+    init(networkService: NetworkServiceProvidable, dataProvider: DataProvidable) {
         self.networkService = networkService
+        self.dataProvider = dataProvider
     }
 
     func fetchPriceInfo() async {

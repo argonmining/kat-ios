@@ -17,6 +17,10 @@ enum Localization {
     static let tokenSelectionTitle = "token_selection_title".localized
     static let buttonCompare = "button_compare".localized
     static let addressCopyMessage = "address_copy_message".localized
+    static let buttonConfirm = "button_confirm".localized
+    static let buttonAddAddress = "button_add_address".localized
+    static let buttonDelete = "button_delete".localized
+    static let buttonEdit = "button_edit".localized
 
     // Welcome
     static let welcomeTitle = "welcome_title".localized
@@ -35,6 +39,13 @@ enum Localization {
 
     // Wallets
     static let walletsTitle = "wallets_title".localized
+    static let walletsTagsTokens = "wallets_tags_tokens".localized
+    static let walletsTagsNfts = "wallets_tags_nfts".localized
+    static let walletsTagsMiners = "wallets_tags_miners".localized
+    static let walletsTagsNone = "wallets_tags_none".localized
+    static let walletTagsCaption = "wallets_tags_caption".localized
+    static let walletsEmptyTitle = "wallets_empty_title".localized
+    static let walletsEmptyDescription = "wallets_empty_description".localized
 
     // Widgets
     static let widgetPriceTitle = "widget_price_title".localized
