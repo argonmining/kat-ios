@@ -7,7 +7,26 @@ struct HomeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.padding_2) {
+            VStack(alignment: .leading, spacing: .zero) {
+                if viewModel.showAddresses {
+                    addressesWidget
+                        .padding(.bottom, Spacing.padding_2)
+                        .sheet(isPresented: $viewModel.addressTokensViewPresented) {
+                            if
+                                let address = viewModel.selectedAddress,
+                                let tokens = viewModel.addressTokens[address]
+                            {
+                                NavigationView {
+                                    AddressTokensView(address: address, tokens: tokens)
+                                }
+                                .presentationDetents([.large])
+                                .presentationDragIndicator(.visible)
+                            } else {
+                                EmptyView()
+                            }
+                        }
+                }
+
                 HStack(spacing: Spacing.padding_1_5) {
                     Image("logo")
                         .resizable()
@@ -17,7 +36,8 @@ struct HomeView: View {
                     Spacer()
                     PillDS(text: Localization.fairMint, style: .large)
                 }
-                .padding(.bottom, Spacing.padding_1)
+                .padding(.bottom, Spacing.padding_2)
+
                 HStack(spacing: Spacing.padding_2) {
                     WidgetDS {
                         VStack(alignment: .leading, spacing: Spacing.padding_1) {
@@ -40,8 +60,10 @@ struct HomeView: View {
                     }
                     PriceWidgetView(viewData: $viewModel.tokenPriceData)
                 }
+                .padding(.bottom, Spacing.padding_2)
 
                 PriceChartWidgetView(chartData: $viewModel.chartData)
+                    .padding(.bottom, Spacing.padding_2)
 
                 if viewModel.showHolders {
                     WidgetDS {
@@ -72,6 +94,9 @@ struct HomeView: View {
                     NavigationView {
                         WalletsView(viewModel: .init(dataProvider: viewModel.dataProvider))
                     }
+                    .onDisappear {
+                        viewModel.checkAddresses()
+                    }
                 }
             }
         }
@@ -83,6 +108,70 @@ struct HomeView: View {
         .task {
             await viewModel.fetchPriceInfo()
             await viewModel.fetchTokenHolders()
+        }
+    }
+
+    @ViewBuilder
+    private var addressesWidget: some View {
+        if viewModel.addressesLoading {
+            TabView {
+                WidgetDS {
+                    VStack(alignment: .leading, spacing: Spacing.padding_1) {
+                        PillDS(
+                            text: "addressaddress",
+                            style: .large,
+                            color: .accentColor.opacity(0.7)
+                        )
+                        .shimmer(isActive: true)
+                        HStack {
+                            Text("0 tokens")
+                                .typography(.body1)
+                                .shimmer(isActive: true)
+                            Spacer()
+                            Text("0.00")
+                            .typography(.numeric4)
+                            .shimmer(isActive: true)
+                        }
+                    }
+                }
+                .padding(.horizontal, Spacing.padding_2)
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(height: 100)
+        } else {
+            TabView {
+                ForEach(viewModel.addressModels, id: \.self) { addressModel in
+                    WidgetDS {
+                        VStack(alignment: .leading, spacing: Spacing.padding_1) {
+                            PillDS(
+                                text: addressModel.address.trimmedInMiddle(toLength: 22, shiftStartBy: 6),
+                                style: .large,
+                                color: .accentColor.opacity(0.7)
+                            )
+                            if
+                                let tokens = viewModel.addressTokens[addressModel.address]
+                            {
+                                HStack {
+                                    Text("\(tokens.count) tokens")
+                                        .typography(.body1)
+                                    Spacer()
+                                    Text(Formatter.formatToUSD(tokens.reduce(0.0) { total, token in
+                                        total + (token.price?.priceInUsd ?? 0.0) * token.calculatedBalance
+                                    }))
+                                    .typography(.numeric4)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.horizontal, Spacing.padding_2)
+                    .onTapGesture {
+                        viewModel.selectedAddress = addressModel.address
+                        viewModel.addressTokensViewPresented = true
+                    }
+                }
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(height: 100)
         }
     }
 

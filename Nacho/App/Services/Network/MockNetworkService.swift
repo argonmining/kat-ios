@@ -268,4 +268,58 @@ final class MockNetworkService: NetworkServiceProvidable {
             )
         ]
     }
+
+    func fetchAddressTokens(address: String) async throws -> [AddressTokenInfoKasFyiDTO] {
+        try await Task.sleep(nanoseconds: 2_000_000_000) // Simulates delay
+
+        let tokens = [
+            AddressTokenInfoKasFyiDTO(
+                balance: "9372704713966445",
+                ticker: "GHOAD",
+                decimal: "8",
+                locked: "0",
+                opScoreMod: "1027115990000",
+                price: .init(
+                    floorPrice: 0.005903077422961695,
+                    priceInUsd: 0.0005086584733943417,
+                    marketCapInUsd: 2034633.3847697156,
+                    change24h: 3.9924914428355924,
+                    change24hInKas: 10.839678375030424
+                ),
+                iconUrl: URL(string: "https://krc20-assets.kas.fyi/icons/GHOAD.jpg")!
+            ),
+            AddressTokenInfoKasFyiDTO(
+                balance: "64709650775759093",
+                ticker: "NACHO",
+                decimal: "8",
+                locked: "0",
+                opScoreMod: "1026817450001",
+                price: .init(
+                    floorPrice: 0.00045633630777855574,
+                    priceInUsd: 0.00003932174915513671,
+                    marketCapInUsd: 11285341.521405213,
+                    change24h: -15.907294364549385,
+                    change24hInKas: -10.372914115966662
+                ),
+                iconUrl: URL(string: "https://krc20-assets.kas.fyi/icons/NACHO.jpg")!
+            ),
+            AddressTokenInfoKasFyiDTO(
+                balance: "135050002871078355",
+                ticker: "KASPY",
+                decimal: "8",
+                locked: "0",
+                opScoreMod: "1025218250000",
+                price: .init(
+                    floorPrice: 0.00016555817575224883,
+                    priceInUsd: 0.000014265875729246294,
+                    marketCapInUsd: 4721138.034599611,
+                    change24h: -5.210128044875123,
+                    change24hInKas: 1.0055370338898397
+                ),
+                iconUrl: URL(string: "https://krc20-assets.kas.fyi/icons/KASPY.jpg")!
+            )
+        ]
+
+        return tokens
+    }
 }

@@ -9,6 +9,12 @@ final class HomeViewModel {
     var holders: [HolderInfo]? = nil
     var showHolders: Bool = true
     var walletPresented: Bool = false
+    var addressModels: [AddressModel] = []
+    var addressTokens: [String: [AddressTokenInfoKasFyiDTO]] = [:]
+    var addressesLoading: Bool = false
+    var showAddresses: Bool = false
+    var addressTokensViewPresented: Bool = false
+    var selectedAddress: String? = nil
 
     let dataProvider: DataProvidable
     private let networkService: NetworkServiceProvidable
@@ -16,6 +22,30 @@ final class HomeViewModel {
     init(networkService: NetworkServiceProvidable, dataProvider: DataProvidable) {
         self.networkService = networkService
         self.dataProvider = dataProvider
+        checkAddresses()
+    }
+
+    func fetchAddressTokens(_ addresses: [String]) async {
+        await withTaskGroup(of: (String, [AddressTokenInfoKasFyiDTO]?).self) { group in
+            for address in addresses {
+                group.addTask { [weak self] in
+                    do {
+                        let tokens = try await self?.networkService.fetchAddressTokens(address: address)
+                        return (address, tokens)
+                    } catch {
+                        print("Failed to fetch tokens for address \(address): \(error)")
+                        return (address, nil)
+                    }
+                }
+            }
+            var results: [String: [AddressTokenInfoKasFyiDTO]] = [:]
+            for await (address, tokens) in group {
+                if let tokens = tokens {
+                    results[address] = tokens
+                }
+            }
+            self.addressTokens = results
+        }
     }
 
     func fetchPriceInfo() async {
@@ -46,6 +76,31 @@ final class HomeViewModel {
             // TODO: Add error handling
             print("Error: \(error)")
             showHolders = false
+        }
+    }
+
+    func checkAddresses() {
+        addressesLoading = true
+        Task {
+            do {
+                let addressModels = try await self.dataProvider.getAddresses().filter { $0.contentTypes.contains(.tokens) }
+                if !addressModels.isEmpty {
+                    await MainActor.run {
+                        showAddresses = true
+                    }
+                }
+                await self.fetchAddressTokens(addressModels.compactMap(\.address))
+                await MainActor.run {
+                    self.addressModels = addressModels
+                    addressesLoading = false
+                }
+            } catch {
+                // TODO: Add error handling
+                print("Error: \(error)")
+                await MainActor.run {
+                    addressesLoading = false
+                }
+            }
         }
     }
 }
