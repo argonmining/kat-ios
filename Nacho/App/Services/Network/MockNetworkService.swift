@@ -184,6 +184,16 @@ final class MockNetworkService: NetworkServiceProvidable {
         )
     }
 
+    func fetchAddressNFTs(address: String) async throws -> [AddressNFTInfoDTO] {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return [
+            .init(tick: "NACHO", buri: "", tokenId: "569", opScoreMod: ""),
+            .init(tick: "NACHO", buri: "", tokenId: "5675", opScoreMod: ""),
+            .init(tick: "NACHO", buri: "", tokenId: "34", opScoreMod: ""),
+            .init(tick: "NACHO", buri: "", tokenId: "6654", opScoreMod: "")
+        ]
+    }
+
     func fetchNFTInfo(hash: String, index: Int) async throws -> NFTInfo {
         try await Task.sleep(nanoseconds: 2_000)
         return .init(

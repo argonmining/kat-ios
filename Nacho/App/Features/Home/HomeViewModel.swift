@@ -88,6 +88,10 @@ final class HomeViewModel {
                     await MainActor.run {
                         showAddresses = true
                     }
+                } else {
+                    await MainActor.run {
+                        showAddresses = false
+                    }
                 }
                 await self.fetchAddressTokens(addressModels.compactMap(\.address))
                 await MainActor.run {
@@ -98,6 +102,7 @@ final class HomeViewModel {
                 // TODO: Add error handling
                 print("Error: \(error)")
                 await MainActor.run {
+                    showAddresses = false
                     addressesLoading = false
                 }
             }

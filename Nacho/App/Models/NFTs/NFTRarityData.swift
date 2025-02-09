@@ -1,6 +1,7 @@
 import Foundation
 
 struct NFTCollection: Decodable {
+
     let collectionInfo: CollectionInfo
     let traitRarity: [String: [String: TraitInfo]]
     let nftRarity: [String: NFTRarity]

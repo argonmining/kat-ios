@@ -12,10 +12,30 @@ struct NFTsView: View {
     var body: some View {
         ZStack {
             ScrollView {
-                VStack {
+                VStack(spacing: .zero) {
+                    if viewModel.showAddresses {
+                        addressesWidget
+                            .padding(.bottom, Spacing.padding_2)
+                            .sheet(isPresented: $viewModel.addressNFTsViewPresented) {
+                                if
+                                    let address = viewModel.selectedAddress
+                                {
+                                    let nfts = viewModel.filteredNFTsForAddress(address)
+                                    NavigationView {
+                                        AddressNFTsView(address: address, nfts: nfts)
+                                    }
+                                    .presentationDetents([.large])
+                                    .presentationDragIndicator(.visible)
+                                } else {
+                                    EmptyView()
+                                }
+                            }
+                    }
                     collectionHeader
-                        .padding(.vertical, Spacing.padding_1)
+                        .padding(.bottom, Spacing.padding_2)
+                        .padding(.top, Spacing.padding_1)
                     collectionWidget
+                        .padding(.bottom, Spacing.padding_1)
                     nftGrid
                         .padding(.vertical, Spacing.padding_1)
                 }
@@ -33,6 +53,9 @@ struct NFTsView: View {
             )
             .onChange(of: viewModel.searchText) {
                 viewModel.filterNFTs()
+            }
+            .onAppear {
+                viewModel.checkAddresses()
             }
 
             // Detail View
@@ -82,7 +105,73 @@ struct NFTsView: View {
             isDetailViewVisible = false
         }
     }
-    
+
+    @ViewBuilder
+    private var addressesWidget: some View {
+        if viewModel.addressesLoading {
+            TabView {
+                WidgetDS {
+                    VStack(alignment: .leading, spacing: Spacing.padding_1) {
+                        PillDS(
+                            text: "addressaddress",
+                            style: .large,
+                            color: .accentColor.opacity(0.7)
+                        )
+                        .shimmer(isActive: true)
+                        HStack {
+                            Text("0 NFTs")
+                                .typography(.body1)
+                                .shimmer(isActive: true)
+                            Spacer()
+                            Text("0.00")
+                            .typography(.numeric4)
+                            .shimmer(isActive: true)
+                        }
+                    }
+                }
+                .padding(.horizontal, Spacing.padding_2)
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(height: 100)
+        } else {
+            TabView {
+                ForEach(viewModel.addressModels, id: \.self) { addressModel in
+                    WidgetDS {
+                        VStack(alignment: .leading, spacing: Spacing.padding_1) {
+                            PillDS(
+                                text: addressModel.address.trimmedInMiddle(toLength: 22, shiftStartBy: 6),
+                                style: .large,
+                                color: .accentColor.opacity(0.7)
+                            )
+                            if
+                                let nfts = viewModel.addressNFTs[addressModel.address]
+                            {
+                                HStack {
+                                    HStack(spacing: -20) {
+                                        ForEach(Array(nfts.prefix(5).enumerated()), id: \.element) { index, nft in
+                                            NFTImage(index: "/NACHO/\(nft.tokenId)", isCache: true)
+                                                .zIndex(Double(3 - index))
+                                        }
+                                    }
+                                    Spacer()
+                                    Text("\(nfts.count) NFTs")
+                                        .typography(.body1)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.horizontal, Spacing.padding_2)
+                    .onTapGesture {
+                        viewModel.selectedAddress = addressModel.address
+                        viewModel.addressNFTsViewPresented = true
+                    }
+                }
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(height: 120)
+        }
+    }
+
     @ViewBuilder
     private var nftGrid: some View {
         if viewModel.isNFTsLoading {

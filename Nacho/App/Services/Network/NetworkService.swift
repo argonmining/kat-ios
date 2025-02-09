@@ -13,6 +13,7 @@ protocol NetworkServiceProvidable: AnyObject {
     func fetchAddressBalance(address: String) async throws -> AddressBalance
     func fetchKasplexInfo() async throws -> KasplexInfo
     func fetchNFTCollectionInfo(ticker: String) async throws -> NFTCollectionInfo
+    func fetchAddressNFTs(address: String) async throws -> [AddressNFTInfoDTO]
     func fetchNFTInfo(hash: String, index: Int) async throws -> NFTInfo
     func fetchKatPoolBlocks() async throws -> PoolBlocks
     func fetchKatPoolBlocks24() async throws -> PoolBlocks24h
@@ -187,6 +188,20 @@ final class NetworkService: NetworkServiceProvidable {
         }
     }
 
+    func fetchAddressNFTs(address: String) async throws -> [AddressNFTInfoDTO] {
+        let dataTask = AF.request(nftUrl + Endpoint.addressNfts(address).value)
+            .validate()
+            .serializingDecodable(ResponseWrapper<[AddressNFTInfoDTO]>.self)
+        
+        do {
+            let response = try await dataTask.value
+            return response.result
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
+
     func fetchNFTInfo(hash: String, index: Int) async throws -> NFTInfo {
         let dataTask = AF.request(nftCacheUrl + Endpoint.nftInfo(hash, index).value)
             .validate()
@@ -301,6 +316,7 @@ private extension NetworkService {
         case kasplexInfo
         case nftCollection(String)
         case nftInfo(String, Int)
+        case addressNfts(String)
         // Kat Pool
         case blocks
         case blocks24h
@@ -323,6 +339,7 @@ private extension NetworkService {
             case .kasplexInfo: return "/info"
             case .nftCollection(let ticker): return "/nfts/\(ticker)"
             case .nftInfo(let ticker, let index): return "/metadata/\(ticker)/\(index)"
+            case .addressNfts(let address): return "/address/\(address)"
             case .blocks: return "/blocks"
             case .blocks24h: return "/blocks24h"
             case .miners: return "/minerTypes"
