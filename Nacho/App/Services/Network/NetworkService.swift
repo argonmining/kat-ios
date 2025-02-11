@@ -20,6 +20,8 @@ protocol NetworkServiceProvidable: AnyObject {
     func fetchKatPoolMiners() async throws -> PoolMiners
     func fetchKatPoolHistory(range: Int) async throws -> [PoolHistoryValue]
     func fetchKatPoolPayouts() async throws -> [PoolPayout]
+    func fetchWorkersHashRate(address: String) async throws -> [WorkerHashRateDTO]
+    func fetchKatPoolAddressHistory(address: String, range: Int) async throws -> [PoolHistoryValue]
     func fetchAddressTokens(address: String) async throws -> [AddressTokenInfoKasFyiDTO]
 }
 
@@ -286,6 +288,41 @@ final class NetworkService: NetworkServiceProvidable {
         }
     }
 
+    func fetchWorkersHashRate(address: String) async throws -> [WorkerHashRateDTO] {
+        let parameters: [String: Any] = ["wallet": address]
+        let dataTask = AF.request(katPoolUrl + Endpoint.workersHashRate.value, parameters: parameters)
+            .validate()
+            .serializingDecodable(DataResponseWrapper<ResponseWrapper<[WorkerHashRateDTO]>>.self)
+        do {
+            let response = try await dataTask.value
+            return response.data.result
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
+
+    func fetchKatPoolAddressHistory(address: String, range: Int) async throws -> [PoolHistoryValue] {
+        let parameters: [String: Any] = [
+            "wallet": address,
+            "range": "\(range)d"
+        ]
+        let dataTask = AF.request(katPoolUrl + Endpoint.addressHashRate.value, parameters: parameters)
+            .validate()
+            .serializingDecodable(DataResponseWrapper<ResponseWrapper<[AddressHashRateDTO]>>.self)
+        do {
+            let response = try await dataTask.value
+            guard let values = response.data.result.first?.values else {
+                print("Error: can't decode pool history values")
+                throw NetworkError.somethingWentWrong
+            }
+            return values
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
+
     // Address Data
 
     func fetchAddressTokens(address: String) async throws -> [AddressTokenInfoKasFyiDTO] {
@@ -323,6 +360,8 @@ private extension NetworkService {
         case miners
         case poolHistory
         case payouts
+        case workersHashRate
+        case addressHashRate
         // Address
         case addressTokens(String)
 
@@ -340,11 +379,13 @@ private extension NetworkService {
             case .nftCollection(let ticker): return "/nfts/\(ticker)"
             case .nftInfo(let ticker, let index): return "/metadata/\(ticker)/\(index)"
             case .addressNfts(let address): return "/address/\(address)"
-            case .blocks: return "/blocks"
-            case .blocks24h: return "/blocks24h"
-            case .miners: return "/minerTypes"
-            case .poolHistory: return "/hashrate/history"
-            case .payouts: return "/payouts"
+            case .blocks: return "/pool/blocks"
+            case .blocks24h: return "/pool/blocks24h"
+            case .miners: return "/pool/minerTypes"
+            case .poolHistory: return "/pool/hashrate/history"
+            case .payouts: return "/pool/payouts"
+            case .workersHashRate: return "/miner/workerHashrate"
+            case .addressHashRate: return "/miner/hashrate"
             case .addressTokens(let address): return "/addresses/\(address)/tokens"
             }
         }

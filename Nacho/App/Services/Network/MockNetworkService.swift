@@ -279,10 +279,43 @@ final class MockNetworkService: NetworkServiceProvidable {
         ]
     }
 
-    func fetchAddressTokens(address: String) async throws -> [AddressTokenInfoKasFyiDTO] {
-        try await Task.sleep(nanoseconds: 2_000_000_000) // Simulates delay
+    func fetchWorkersHashRate(address: String) async throws -> [WorkerHashRateDTO] {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return [
+            WorkerHashRateDTO(
+                minerID: "KS0Ultra",
+                address: "kaspa:qpddrclq2hwkacgxurz9ms4xrqjyte08megnh9qqqcudxu53kkp676y405gmn",
+                fifteenMin: 419.41247548155957,
+                oneHour: 396.02959555094907,
+                twelveHour: 414.95647986004377,
+                twentyFourHour: 413.3428633096107
+            ),
+            WorkerHashRateDTO(
+                minerID: "KS5Lrev025",
+                address: "kaspa:qpddrclq2hwkacgxurz9ms4xrqjyte08megnh9qqqcudxu53kkp676y405gmn",
+                fifteenMin: 12852.899766801804,
+                oneHour: 11730.043105685956,
+                twelveHour: 10328.460779845685,
+                twentyFourHour: 10373.292232745018
+            )
+        ]
+    }
 
-        let tokens = [
+    func fetchKatPoolAddressHistory(address: String, range: Int) async throws -> [PoolHistoryValue] {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return [
+            PoolHistoryValue(timestamp: 1737484553.0, hashRate: 190104.81893454556),
+            PoolHistoryValue(timestamp: 1737488153.0, hashRate: 186638.58068274715),
+            PoolHistoryValue(timestamp: 1737491753.0, hashRate: 208658.48159911227),
+            PoolHistoryValue(timestamp: 1737495353.0, hashRate: 251361.32375737873),
+            PoolHistoryValue(timestamp: 1737498953.0, hashRate: 255225.97633716525)
+        ]
+    }
+
+    func fetchAddressTokens(address: String) async throws -> [AddressTokenInfoKasFyiDTO] {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+
+        return [
             AddressTokenInfoKasFyiDTO(
                 balance: "9372704713966445",
                 ticker: "GHOAD",
@@ -329,7 +362,5 @@ final class MockNetworkService: NetworkServiceProvidable {
                 iconUrl: URL(string: "https://krc20-assets.kas.fyi/icons/KASPY.jpg")!
             )
         ]
-
-        return tokens
     }
 }

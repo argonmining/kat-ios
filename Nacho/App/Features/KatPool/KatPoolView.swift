@@ -6,7 +6,25 @@ struct KatPoolView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: Spacing.padding_2) {
+            VStack(spacing: .zero) {
+                if viewModel.showAddresses {
+                    addressesWidget
+                        .padding(.bottom, Spacing.padding_2)
+                        .sheet(isPresented: $viewModel.addressWorkersViewPresented) {
+//                            if
+//                                let address = viewModel.selectedAddress,
+//                                let workers = viewModel.addressWorkers[address]
+//                            {
+//                                NavigationView {
+//                                    AddressTokensView(address: address, tokens: tokens)
+//                                }
+//                                .presentationDetents([.large])
+//                                .presentationDragIndicator(.visible)
+//                            } else {
+//                                EmptyView()
+//                            }
+                        }
+                }
                 if viewModel.isLoading {
                     loadingPlaceholder
                 } else {
@@ -26,6 +44,7 @@ struct KatPoolView: View {
                                 value: Formatter.formatToNumber(blocks24h)
                             )
                         }
+                        .padding(.bottom, Spacing.padding_2)
 
                         WidgetDS {
                             VStack(spacing: Spacing.padding_1) {
@@ -57,7 +76,9 @@ struct KatPoolView: View {
                                 }
                             }
                         }
+                        .padding(.bottom, Spacing.padding_2)
                         hashrateWidget
+                            .padding(.bottom, Spacing.padding_2)
                         payoutsWidget
                     } else {
                         EmptyStateDS(text: Localization.emptyViewText)
@@ -72,6 +93,66 @@ struct KatPoolView: View {
         .background(Color.surfaceBackground.ignoresSafeArea())
         .task {
             await viewModel.fetchBlocksInfo()
+        }
+    }
+
+    @ViewBuilder
+    private var addressesWidget: some View {
+        if viewModel.addressesLoading {
+            TabView {
+                WidgetDS {
+                    VStack(alignment: .leading, spacing: Spacing.padding_1) {
+                        PillDS(
+                            text: "addressaddress",
+                            style: .large,
+                            color: .accentColor.opacity(0.7)
+                        )
+                        .shimmer(isActive: true)
+                        HStack {
+                            Text("0 tokens")
+                                .typography(.body1)
+                                .shimmer(isActive: true)
+                            Spacer()
+                            Text("0.00")
+                            .typography(.numeric4)
+                            .shimmer(isActive: true)
+                        }
+                    }
+                }
+                .padding(.horizontal, Spacing.padding_2)
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(height: 86)
+        } else {
+            TabView {
+                ForEach(viewModel.addressModels, id: \.self) { addressModel in
+                    WidgetDS {
+                        VStack(alignment: .leading, spacing: Spacing.padding_1) {
+                            PillDS(
+                                text: addressModel.address.trimmedInMiddle(toLength: 22, shiftStartBy: 6),
+                                style: .large,
+                                color: .accentColor.opacity(0.7)
+                            )
+                            if
+                                let workers = viewModel.addressWorkers[addressModel.address]
+                            {
+                                HStack {
+                                    Text("\(workers.count) workers")
+                                        .typography(.body1)
+                                    Spacer()
+                                }
+                            }
+                        }
+                    }
+                    .padding(.horizontal, Spacing.padding_2)
+                    .onTapGesture {
+                        viewModel.selectedAddress = addressModel.address
+                        viewModel.addressWorkersViewPresented = true
+                    }
+                }
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(height: 86)
         }
     }
 
@@ -210,6 +291,11 @@ struct KatPoolView: View {
 
 #Preview {
     NavigationView {
-        KatPoolView(viewModel: .init(networkService: MockNetworkService()))
+        KatPoolView(
+            viewModel: .init(
+                networkService: MockNetworkService(),
+                dataProvider: MockDataProvider()
+            )
+        )
     }
 }

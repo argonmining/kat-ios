@@ -14,11 +14,74 @@ final class KatPoolViewModel {
     var isLoading: Bool = false
     var hashrateTimeInterval: Int = 7
     var payoutsTimeInterval: Int = 7
+    // Addresses
+    var addressModels: [AddressModel] = []
+    var addressWorkers: [String: [WorkerHashRateDTO]] = [:]
+    var addressesLoading: Bool = false
+    var showAddresses: Bool = false
+    var addressWorkersViewPresented: Bool = false
+    var selectedAddress: String? = nil
 
+    private let dataProvider: DataProvidable
     private let networkService: NetworkServiceProvidable
 
-    init(networkService: NetworkServiceProvidable) {
+    init(networkService: NetworkServiceProvidable, dataProvider: DataProvidable) {
         self.networkService = networkService
+        self.dataProvider = dataProvider
+        checkAddresses()
+    }
+
+    func checkAddresses() {
+        addressesLoading = true
+        Task {
+            do {
+                let addressModels = try await self.dataProvider.getAddresses().filter { $0.contentTypes.contains(.miners) }
+                if !addressModels.isEmpty {
+                    await MainActor.run {
+                        showAddresses = true
+                    }
+                } else {
+                    await MainActor.run {
+                        showAddresses = false
+                    }
+                }
+                await self.fetchAddressTokens(addressModels.compactMap(\.address))
+                await MainActor.run {
+                    self.addressModels = addressModels
+                    addressesLoading = false
+                }
+            } catch {
+                // TODO: Add error handling
+                print("Error: \(error)")
+                await MainActor.run {
+                    showAddresses = false
+                    addressesLoading = false
+                }
+            }
+        }
+    }
+
+    func fetchAddressTokens(_ addresses: [String]) async {
+        await withTaskGroup(of: (String, [WorkerHashRateDTO]?).self) { group in
+            for address in addresses {
+                group.addTask { [weak self] in
+                    do {
+                        let workers = try await self?.networkService.fetchWorkersHashRate(address: address)
+                        return (address, workers)
+                    } catch {
+                        print("Failed to fetch workers for address \(address): \(error)")
+                        return (address, nil)
+                    }
+                }
+            }
+            var results: [String: [WorkerHashRateDTO]] = [:]
+            for await (address, workers) in group {
+                if let workers = workers {
+                    results[address] = workers
+                }
+            }
+            self.addressWorkers = results
+        }
     }
 
     func fetchBlocksInfo() async {

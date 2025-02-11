@@ -15,7 +15,10 @@ final class AppSkeletonViewModel {
             dataProvider: dataProvider
         )
         katScanViewModel = KatScanViewModel(networkService: networkService)
-        katPoolViewModel = KatPoolViewModel(networkService: networkService)
+        katPoolViewModel = KatPoolViewModel(
+            networkService: networkService,
+            dataProvider: dataProvider
+        )
         nftsViewModel = NFTsViewModel(
             networkService: networkService,
             dataProvider: dataProvider
