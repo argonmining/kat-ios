@@ -7,6 +7,7 @@ class AddressWorkersViewModel {
     let workers: [WorkerHashRateDTO]
 
     var hashrateChartData: [LineChartDS.ChartData]? = nil
+    var payouts: [PoolAddressPayoutDTO]? = nil
     var isLoading: Bool = false
     var hashrateTimeInterval: Int = 7
 
@@ -29,11 +30,14 @@ class AddressWorkersViewModel {
                 address: address,
                 range: hashrateTimeInterval
             )
+            async let payouts = networkService.fetchKatPoolAddressPayouts(address: address)
             let result = try (
-                await history
+                await history,
+                await payouts
             )
             await MainActor.run {
-                self.hashrateChartData = result.compactMap({$0.toChartDataItem()})
+                self.hashrateChartData = result.0.compactMap({$0.toChartDataItem()})
+                self.payouts = result.1.sorted { $0.timestamp > $1.timestamp }
                 isLoading = false
             }
         } catch {

@@ -11,18 +11,15 @@ struct KatPoolView: View {
                     addressesWidget
                         .padding(.bottom, Spacing.padding_2)
                         .sheet(isPresented: $viewModel.addressWorkersViewPresented) {
-//                            if
-//                                let address = viewModel.selectedAddress,
-//                                let workers = viewModel.addressWorkers[address]
-//                            {
-//                                NavigationView {
-//                                    AddressTokensView(address: address, tokens: tokens)
-//                                }
-//                                .presentationDetents([.large])
-//                                .presentationDragIndicator(.visible)
-//                            } else {
-//                                EmptyView()
-//                            }
+                            if let viewModel = viewModel.addressWorkersViewModel {
+                                NavigationView {
+                                    AddressWorkersView(viewModel: viewModel)
+                                }
+                                .presentationDetents([.large])
+                                .presentationDragIndicator(.visible)
+                            } else {
+                                EmptyView()
+                            }
                         }
                 }
                 if viewModel.isLoading {
@@ -94,6 +91,9 @@ struct KatPoolView: View {
         .task {
             await viewModel.fetchBlocksInfo()
         }
+        .onAppear {
+            viewModel.checkAddresses()
+        }
     }
 
     @ViewBuilder
@@ -146,8 +146,7 @@ struct KatPoolView: View {
                     }
                     .padding(.horizontal, Spacing.padding_2)
                     .onTapGesture {
-                        viewModel.selectedAddress = addressModel.address
-                        viewModel.addressWorkersViewPresented = true
+                        viewModel.selectAddress(addressModel.address)
                     }
                 }
             }

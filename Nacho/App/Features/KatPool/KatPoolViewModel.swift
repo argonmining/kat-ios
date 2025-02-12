@@ -20,7 +20,7 @@ final class KatPoolViewModel {
     var addressesLoading: Bool = false
     var showAddresses: Bool = false
     var addressWorkersViewPresented: Bool = false
-    var selectedAddress: String? = nil
+    var addressWorkersViewModel: AddressWorkersViewModel? = nil
 
     private let dataProvider: DataProvidable
     private let networkService: NetworkServiceProvidable
@@ -29,6 +29,16 @@ final class KatPoolViewModel {
         self.networkService = networkService
         self.dataProvider = dataProvider
         checkAddresses()
+    }
+
+    func selectAddress(_ address: String) {
+        guard let workers = addressWorkers[address] else { return }
+        addressWorkersViewModel = AddressWorkersViewModel(
+            address: address,
+            workers: workers,
+            networkService: networkService
+        )
+        addressWorkersViewPresented = true
     }
 
     func checkAddresses() {

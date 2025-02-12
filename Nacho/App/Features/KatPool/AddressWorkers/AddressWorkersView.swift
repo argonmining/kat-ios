@@ -13,7 +13,7 @@ struct AddressWorkersView: View {
                             VStack(spacing: Spacing.padding_2) {
                                 HStack {
                                     Text(worker.minerID)
-                                        .typography(.headline3, color: .textSecondary)
+                                        .typography(.headline3)
                                         .lineLimit(1)
                                     Spacer()
                                 }
@@ -58,6 +58,9 @@ struct AddressWorkersView: View {
 
                 hashrateWidget
                     .padding(.horizontal, Spacing.padding_2)
+
+                payoutsWidget
+                    .padding(Spacing.padding_2)
             }
             .padding(.bottom, Spacing.padding_2)
         }
@@ -97,6 +100,35 @@ struct AddressWorkersView: View {
                 )
                 .frame(height: 200)
             }
+        }
+    }
+
+    @ViewBuilder
+    private var payoutsWidget: some View {
+        if let payouts = viewModel.payouts {
+            WidgetDS {
+                LazyVStack(spacing: Spacing.padding_2) {
+                    HStack {
+                        Text(Localization.katPoolPayoutsTitle)
+                            .typography(.headline3, color: .textSecondary)
+                        Spacer()
+                        Text(Formatter.formatToNumber(payouts.reduce(0, { $0 + $1.amount })) + " KAS")
+                            .typography(.subtitle, color: .solidSuccess)
+                    }
+                    ForEach(payouts, id: \.self) { payout in
+                        HStack {
+                            Text(Formatter.formatDateAndTime(payout.timestamp / 1000))
+                                .typography(.caption)
+                            Spacer()
+                            Text(Formatter.formatToNumber(payout.amount) + " KAS")
+                                .typography(.body1, color: .solidSuccess)
+                        }
+                        Divider()
+                    }
+                }
+            }
+        } else {
+            EmptyView()
         }
     }
 }

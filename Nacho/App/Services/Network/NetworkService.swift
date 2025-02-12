@@ -22,6 +22,7 @@ protocol NetworkServiceProvidable: AnyObject {
     func fetchKatPoolPayouts() async throws -> [PoolPayout]
     func fetchWorkersHashRate(address: String) async throws -> [WorkerHashRateDTO]
     func fetchKatPoolAddressHistory(address: String, range: Int) async throws -> [PoolHistoryValue]
+    func fetchKatPoolAddressPayouts(address: String) async throws -> [PoolAddressPayoutDTO]
     func fetchAddressTokens(address: String) async throws -> [AddressTokenInfoKasFyiDTO]
 }
 
@@ -323,6 +324,20 @@ final class NetworkService: NetworkServiceProvidable {
         }
     }
 
+    func fetchKatPoolAddressPayouts(address: String) async throws -> [PoolAddressPayoutDTO] {
+        let parameters: [String: Any] = ["wallet": address]
+        let dataTask = AF.request(katPoolUrl + Endpoint.addressPayouts.value, parameters: parameters)
+            .validate()
+            .serializingDecodable(DataResponseWrapper<[PoolAddressPayoutDTO]>.self)
+        do {
+            let response = try await dataTask.value
+            return response.data
+        } catch {
+            print(error)
+            throw NetworkError.somethingWentWrong
+        }
+    }
+
     // Address Data
 
     func fetchAddressTokens(address: String) async throws -> [AddressTokenInfoKasFyiDTO] {
@@ -362,6 +377,7 @@ private extension NetworkService {
         case payouts
         case workersHashRate
         case addressHashRate
+        case addressPayouts
         // Address
         case addressTokens(String)
 
@@ -386,6 +402,7 @@ private extension NetworkService {
             case .payouts: return "/pool/payouts"
             case .workersHashRate: return "/miner/workerHashrate"
             case .addressHashRate: return "/miner/hashrate"
+            case .addressPayouts: return "/miner/payments"
             case .addressTokens(let address): return "/addresses/\(address)/tokens"
             }
         }
