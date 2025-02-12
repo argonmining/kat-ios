@@ -25,6 +25,7 @@ struct HomeView: View {
                                 EmptyView()
                             }
                         }
+                        .shimmer(isActive: viewModel.addressesLoading)
                 }
 
                 HStack(spacing: Spacing.padding_1_5) {
@@ -36,6 +37,7 @@ struct HomeView: View {
                     Spacer()
                     PillDS(text: Localization.fairMint, style: .large)
                 }
+                .padding(.horizontal, Spacing.padding_2)
                 .padding(.bottom, Spacing.padding_2)
 
                 HStack(spacing: Spacing.padding_2) {
@@ -58,11 +60,17 @@ struct HomeView: View {
                                 .padding(.bottom, Spacing.padding_1)
                         }
                     }
+                    .shimmer(isActive: viewModel.isLoading)
+
                     PriceWidgetView(viewData: $viewModel.tokenPriceData)
+                        .shimmer(isActive: viewModel.isLoading)
                 }
+                .padding(.horizontal, Spacing.padding_2)
                 .padding(.bottom, Spacing.padding_2)
 
                 PriceChartWidgetView(chartData: $viewModel.chartData)
+                    .shimmer(isActive: viewModel.isLoading)
+                    .padding(.horizontal, Spacing.padding_2)
                     .padding(.bottom, Spacing.padding_2)
 
                 if viewModel.showHolders {
@@ -72,12 +80,12 @@ struct HomeView: View {
                             supply: NachoInfo.maxSupply
                         )
                     }
-
+                    .padding(.horizontal, Spacing.padding_2)
                 }
 
                 Spacer()
             }
-            .padding(Spacing.padding_2)
+            .padding(.bottom, Spacing.padding_2)
         }
         .navigationTitle(Localization.homeNavigationTitle)
         .toolbar {
@@ -105,9 +113,8 @@ struct HomeView: View {
                 .ignoresSafeArea()
                 .matchedGeometryEffect(id: "background", in: namespace)
         )
-        .task {
-            await viewModel.fetchPriceInfo()
-            await viewModel.fetchTokenHolders()
+        .refreshable {
+            viewModel.refresh()
         }
     }
 
@@ -137,7 +144,7 @@ struct HomeView: View {
                 .padding(.horizontal, Spacing.padding_2)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: 100)
+            .frame(height: 160)
         } else {
             TabView {
                 ForEach(viewModel.addressModels, id: \.self) { addressModel in
@@ -170,8 +177,8 @@ struct HomeView: View {
                     }
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: 100)
+            .tabViewStyle(.page(indexDisplayMode: .always))
+            .frame(height: 160)
         }
     }
 

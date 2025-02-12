@@ -28,7 +28,18 @@ final class KatPoolViewModel {
     init(networkService: NetworkServiceProvidable, dataProvider: DataProvidable) {
         self.networkService = networkService
         self.dataProvider = dataProvider
+        refresh()
+    }
+
+    func refresh() {
         checkAddresses()
+        isLoading = true
+        Task {
+            await fetchBlocksInfo()
+            await MainActor.run {
+                self.isLoading = false
+            }
+        }
     }
 
     func selectAddress(_ address: String) {
@@ -96,7 +107,6 @@ final class KatPoolViewModel {
 
     func fetchBlocksInfo() async {
         guard blocks == nil, blocks24h == nil else { return }
-        isLoading = true
         do {
             async let blocks = networkService.fetchKatPoolBlocks()
             async let blocks24h = networkService.fetchKatPoolBlocks24()
@@ -120,12 +130,10 @@ final class KatPoolViewModel {
                     days: self.payoutsTimeInterval
                 )
                 self.latestPayouts = self.latestPayouts(payouts: result.4, count: 5)
-                isLoading = false
             }
         } catch {
             // TODO: Add error handling
             print("Error: \(error)")
-            isLoading = false
         }
     }
 

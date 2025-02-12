@@ -4,6 +4,7 @@ import Observation
 @Observable
 final class HomeViewModel {
 
+    var isLoading: Bool = false
     var tokenPriceData: TokenPriceData? = nil
     var chartData: [LineChartDS.ChartData]? = nil
     var holders: [HolderInfo]? = nil
@@ -22,7 +23,19 @@ final class HomeViewModel {
     init(networkService: NetworkServiceProvidable, dataProvider: DataProvidable) {
         self.networkService = networkService
         self.dataProvider = dataProvider
+        refresh()
+    }
+
+    func refresh() {
         checkAddresses()
+        isLoading = true
+        Task {
+            await fetchPriceInfo()
+            await fetchTokenHolders()
+            await MainActor.run {
+                isLoading = false
+            }
+        }
     }
 
     func fetchAddressTokens(_ addresses: [String]) async {

@@ -79,15 +79,15 @@ struct KatScanView: View {
             prompt: Localization.searchTokensPlaceholder
         )
         .background(Color.surfaceBackground.ignoresSafeArea())
-        .task {
-            await viewModel.fetchTokens()
-        }
         .onChange(of: viewModel.filterState) { oldValue, newValue in
             guard oldValue != newValue else { return }
             viewModel.onFilterStateChange()
         }
         .onChange(of: viewModel.searchText) {
             viewModel.filterTokens()
+        }
+        .refreshable {
+            viewModel.refresh()
         }
     }
 

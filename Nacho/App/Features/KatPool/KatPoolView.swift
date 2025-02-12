@@ -9,7 +9,6 @@ struct KatPoolView: View {
             VStack(spacing: .zero) {
                 if viewModel.showAddresses {
                     addressesWidget
-                        .padding(.bottom, Spacing.padding_2)
                         .sheet(isPresented: $viewModel.addressWorkersViewPresented) {
                             if let viewModel = viewModel.addressWorkersViewModel {
                                 NavigationView {
@@ -24,6 +23,7 @@ struct KatPoolView: View {
                 }
                 if viewModel.isLoading {
                     loadingPlaceholder
+                        .padding(.horizontal, Spacing.padding_2)
                 } else {
                     if
                         let blocks = viewModel.blocks,
@@ -41,6 +41,7 @@ struct KatPoolView: View {
                                 value: Formatter.formatToNumber(blocks24h)
                             )
                         }
+                        .padding(.horizontal, Spacing.padding_2)
                         .padding(.bottom, Spacing.padding_2)
 
                         WidgetDS {
@@ -73,10 +74,13 @@ struct KatPoolView: View {
                                 }
                             }
                         }
+                        .padding(.horizontal, Spacing.padding_2)
                         .padding(.bottom, Spacing.padding_2)
                         hashrateWidget
+                            .padding(.horizontal, Spacing.padding_2)
                             .padding(.bottom, Spacing.padding_2)
                         payoutsWidget
+                            .padding(.horizontal, Spacing.padding_2)
                     } else {
                         EmptyStateDS(text: Localization.emptyViewText)
                             .padding(.top, Spacing.padding_10)
@@ -84,12 +88,12 @@ struct KatPoolView: View {
                     }
                 }
             }
-            .padding(Spacing.padding_2)
+            .padding(.bottom, Spacing.padding_2)
         }
         .navigationTitle(Localization.katPoolTitle)
         .background(Color.surfaceBackground.ignoresSafeArea())
-        .task {
-            await viewModel.fetchBlocksInfo()
+        .refreshable {
+            viewModel.refresh()
         }
         .onAppear {
             viewModel.checkAddresses()
@@ -122,7 +126,7 @@ struct KatPoolView: View {
                 .padding(.horizontal, Spacing.padding_2)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: 86)
+            .frame(height: 160)
         } else {
             TabView {
                 ForEach(viewModel.addressModels, id: \.self) { addressModel in
@@ -150,8 +154,8 @@ struct KatPoolView: View {
                     }
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: 86)
+            .tabViewStyle(.page(indexDisplayMode: .always))
+            .frame(height: 160)
         }
     }
 

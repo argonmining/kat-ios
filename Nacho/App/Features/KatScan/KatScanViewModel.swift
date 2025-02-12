@@ -27,6 +27,14 @@ final class KatScanViewModel {
 
     init(networkService: NetworkServiceProvidable) {
         self.networkService = networkService
+        refresh()
+    }
+
+    func refresh() {
+        tokens = nil
+        Task {
+            await fetchTokens()
+        }
     }
 
     func onShowMintMapAction() {

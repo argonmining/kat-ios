@@ -15,7 +15,6 @@ struct NFTsView: View {
                 VStack(spacing: .zero) {
                     if viewModel.showAddresses {
                         addressesWidget
-                            .padding(.bottom, Spacing.padding_2)
                             .sheet(isPresented: $viewModel.addressNFTsViewPresented) {
                                 if
                                     let address = viewModel.selectedAddress
@@ -32,30 +31,26 @@ struct NFTsView: View {
                             }
                     }
                     collectionHeader
+                        .padding(.horizontal, Spacing.padding_2)
                         .padding(.bottom, Spacing.padding_2)
-                        .padding(.top, Spacing.padding_1)
                     collectionWidget
+                        .padding(.horizontal, Spacing.padding_2)
                         .padding(.bottom, Spacing.padding_1)
                     nftGrid
+                        .padding(.horizontal, Spacing.padding_2)
                         .padding(.vertical, Spacing.padding_1)
                 }
-                .padding(Spacing.padding_2)
+                .padding(.bottom, Spacing.padding_2)
                 .blur(radius: isDetailViewVisible ? 10 : 0)
             }
             .navigationTitle(Localization.nftsTitle)
             .background(Color.surfaceBackground.ignoresSafeArea())
-            .task {
-                await viewModel.fetchNachoCollection()
-            }
             .searchable(
                 text: $viewModel.searchText,
                 prompt: "Search for NFT Number"
             )
             .onChange(of: viewModel.searchText) {
                 viewModel.filterNFTs()
-            }
-            .onAppear {
-                viewModel.checkAddresses()
             }
 
             // Detail View
@@ -104,6 +99,12 @@ struct NFTsView: View {
             selectedNFT = nil
             isDetailViewVisible = false
         }
+        .refreshable {
+            viewModel.refresh()
+        }
+        .onAppear {
+            viewModel.checkAddresses()
+        }
     }
 
     @ViewBuilder
@@ -132,7 +133,7 @@ struct NFTsView: View {
                 .padding(.horizontal, Spacing.padding_2)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: 100)
+            .frame(height: 190)
         } else {
             TabView {
                 ForEach(viewModel.addressModels, id: \.self) { addressModel in
@@ -150,6 +151,7 @@ struct NFTsView: View {
                                     HStack(spacing: -20) {
                                         ForEach(Array(nfts.prefix(5).enumerated()), id: \.element) { index, nft in
                                             NFTImage(index: "/NACHO/\(nft.tokenId)", isCache: true)
+                                                .frame(height: 50)
                                                 .zIndex(Double(3 - index))
                                         }
                                     }
@@ -167,8 +169,8 @@ struct NFTsView: View {
                     }
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: 120)
+            .tabViewStyle(.page(indexDisplayMode: .always))
+            .frame(height: 190)
         }
     }
 

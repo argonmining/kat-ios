@@ -8,6 +8,7 @@ final class AppSkeletonViewModel {
     let katScanViewModel: KatScanViewModel
     let katPoolViewModel: KatPoolViewModel
     let nftsViewModel: NFTsViewModel
+    var showTabs: Bool
 
     init(networkService: NetworkServiceProvidable, dataProvider: DataProvidable) {
         homeViewModel = HomeViewModel(
@@ -23,5 +24,11 @@ final class AppSkeletonViewModel {
             networkService: networkService,
             dataProvider: dataProvider
         )
+        if UserDefaults.standard.bool(forKey: "is-not-first-launch") {
+            showTabs = true
+        } else {
+            UserDefaults.standard.set(true, forKey: "is-not-first-launch")
+            showTabs = false
+        }
     }
 }

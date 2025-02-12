@@ -30,7 +30,7 @@ final class NFTsViewModel {
         self.dataProvider = dataProvider
         memoryGameViewModel = MemoryGameViewModel(images: ["nft1", "nft2", "nft3", "nft4", "nft5", "nft6"])
         isNFTsLoading = true
-        checkAddresses()
+        refresh()
         Task {
             do {
                 let nftCollection = try await loadNFTCollectionData(from: "nft_rarity_data")
@@ -54,6 +54,13 @@ final class NFTsViewModel {
                     isNFTsLoading = false
                 }
             }
+        }
+    }
+
+    func refresh() {
+        checkAddresses()
+        Task {
+            await fetchNachoCollection()
         }
     }
 

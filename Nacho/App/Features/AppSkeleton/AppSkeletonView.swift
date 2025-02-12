@@ -4,13 +4,12 @@ struct AppSkeletonView: View {
 
     let viewModel: AppSkeletonViewModel
     @Namespace private var animationNamespace
-    @State private var showTabs = false
     @State private var slideOutStep = 0
     @State private var selectedTab: TabType = .home
 
     var body: some View {
         ZStack {
-            if showTabs {
+            if viewModel.showTabs {
                 TabView(selection: $selectedTab) {
                     NavigationStack {
                         HomeView(
@@ -87,7 +86,7 @@ struct AppSkeletonView: View {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + (3 * (animationDuration + delayBetweenAnimations))) {
             withAnimation(.easeInOut) {
-                showTabs = true
+                viewModel.showTabs = true
             }
         }
     }
