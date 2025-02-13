@@ -13,7 +13,7 @@ struct AddressInfoView: View {
                     placeholder: Localization.addressInfoTextInputPlaceholder,
                     text: $viewModel.address,
                     isButtonShowing: viewModel.isPasteAvailable || !viewModel.address.isEmpty,
-                    actionIcon: viewModel.address.isEmpty ? "document.on.document" : "xmark.circle.fill"
+                    actionIcon: viewModel.address.isEmpty ? "doc.on.doc" : "xmark.circle.fill"
                 ) {
                     if viewModel.address.isEmpty {
                         viewModel.pasteFromClipboard()

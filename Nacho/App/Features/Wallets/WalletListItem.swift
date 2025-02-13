@@ -18,7 +18,7 @@ struct WalletListItem: View {
                     UIPasteboard.general.string = addressModel.address
                     Notifications.presentTopMessage(Localization.addressCopyMessage)
                 }) {
-                    Image(systemName: "document.on.document")
+                    Image(systemName: "doc.on.doc")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 20)

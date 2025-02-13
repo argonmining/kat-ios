@@ -27,7 +27,7 @@ struct WalletDetailsView: View {
                 placeholder: Localization.addressInfoTextInputPlaceholder,
                 text: $name,
                 isButtonShowing: isPasteAvailable || !name.isEmpty,
-                actionIcon: name.isEmpty ? "document.on.document" : "xmark.circle.fill"
+                actionIcon: name.isEmpty ? "doc.on.doc" : "xmark.circle.fill"
             ) {
                 if name.isEmpty {
                     pasteFromClipboard()

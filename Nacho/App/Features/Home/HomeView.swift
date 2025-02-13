@@ -93,10 +93,10 @@ struct HomeView: View {
                 Button(action: {
                     viewModel.walletPresented = true
                 }) {
-                    Image(
-                        systemName: "wallet.bifold.fill"
-                    )
-                    .fontWeight(.medium)
+                    Image("wallet")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 32)
                 }
                 .fullScreenCover(isPresented: $viewModel.walletPresented) {
                     NavigationView {

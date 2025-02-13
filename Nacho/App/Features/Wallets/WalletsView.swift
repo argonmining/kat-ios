@@ -77,7 +77,10 @@ struct WalletsView: View {
         VStack {
             Spacer()
             VStack(spacing: Spacing.padding_2) {
-                Image(systemName: "wallet.bifold")
+                Image("wallet")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 42)
                     .typography(.numeric2, color: .textSecondary)
                     .padding(.top, Spacing.padding_1)
                 Text(Localization.walletsEmptyTitle)

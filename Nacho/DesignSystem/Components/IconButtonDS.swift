@@ -18,6 +18,7 @@ struct IconButtonDS: View {
                     .foregroundStyle(Color.textPrimary)
                 Text(text)
                     .typography(.body2, color: .textPrimary)
+                    .lineLimit(1)
             }
             .frame(maxWidth: .infinity)
         }

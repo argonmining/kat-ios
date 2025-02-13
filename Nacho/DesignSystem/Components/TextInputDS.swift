@@ -70,7 +70,7 @@ struct TextInputDS: View {
             placeholder: "Word",
             text: .constant(""),
             isButtonShowing: true,
-            actionIcon: "document.on.document"
+            actionIcon: "doc.on.doc"
         )
         .padding()
         TextInputDS(
