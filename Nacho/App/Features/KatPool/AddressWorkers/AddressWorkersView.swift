@@ -96,7 +96,7 @@ struct AddressWorkersView: View {
                 LineChartDS(
                     chartData: $viewModel.hashrateChartData,
                     showVerticalLabels: true,
-                    decimal: 0
+                    decimal: 1
                 )
                 .frame(height: 200)
             }

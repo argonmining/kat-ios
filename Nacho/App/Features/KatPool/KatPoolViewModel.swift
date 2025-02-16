@@ -16,7 +16,7 @@ final class KatPoolViewModel {
     var payoutsTimeInterval: Int = 7
     // Addresses
     var addressModels: [AddressModel] = []
-    var addressWorkers: [String: [WorkerHashRateDTO]] = [:]
+    var addressWorkers: [String: ([WorkerHashRateDTO], Double?, [LineChartDS.ChartData]?)] = [:]
     var addressesLoading: Bool = false
     var showAddresses: Bool = false
     var addressWorkersViewPresented: Bool = false
@@ -46,7 +46,7 @@ final class KatPoolViewModel {
         guard let workers = addressWorkers[address] else { return }
         addressWorkersViewModel = AddressWorkersViewModel(
             address: address,
-            workers: workers,
+            workers: workers.0,
             networkService: networkService
         )
         addressWorkersViewPresented = true
@@ -66,7 +66,7 @@ final class KatPoolViewModel {
                         showAddresses = false
                     }
                 }
-                await self.fetchAddressTokens(addressModels.compactMap(\.address))
+                await self.fetchAddressData(addressModels.compactMap(\.address))
                 await MainActor.run {
                     self.addressModels = addressModels
                     addressesLoading = false
@@ -82,23 +82,27 @@ final class KatPoolViewModel {
         }
     }
 
-    func fetchAddressTokens(_ addresses: [String]) async {
-        await withTaskGroup(of: (String, [WorkerHashRateDTO]?).self) { group in
+    func fetchAddressData(_ addresses: [String]) async {
+        await withTaskGroup(of: (String, [WorkerHashRateDTO]?, Double?, [LineChartDS.ChartData]?).self) { group in
             for address in addresses {
                 group.addTask { [weak self] in
                     do {
                         let workers = try await self?.networkService.fetchWorkersHashRate(address: address)
-                        return (address, workers)
+                        let payoutsSum = try await self?.networkService.fetchKatPoolAddressPayouts(address: address).reduce(0) { $0 + $1.amount }
+                        let history = try await self?.networkService.fetchKatPoolAddressHistory(address: address, range: 7).compactMap({$0.toChartDataItem()})
+                        return (address, workers, payoutsSum, history)
                     } catch {
                         print("Failed to fetch workers for address \(address): \(error)")
-                        return (address, nil)
+                        return (address, nil, nil, nil)
                     }
                 }
             }
-            var results: [String: [WorkerHashRateDTO]] = [:]
-            for await (address, workers) in group {
+            var results: [String: ([WorkerHashRateDTO], Double?, [LineChartDS.ChartData]?)] = [:]
+            for await (address, workers, payoutsSum, history) in group {
+                var resultData: ([WorkerHashRateDTO], Double?, [LineChartDS.ChartData]?) = ([], payoutsSum, history)
                 if let workers = workers {
-                    results[address] = workers
+                    resultData.0 = workers
+                    results[address] = resultData
                 }
             }
             self.addressWorkers = results

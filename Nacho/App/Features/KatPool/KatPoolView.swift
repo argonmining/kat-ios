@@ -137,13 +137,31 @@ struct KatPoolView: View {
                                 style: .large,
                                 color: .accentColor.opacity(0.7)
                             )
-                            if
-                                let workers = viewModel.addressWorkers[addressModel.address]
+                            if let workersData = viewModel.addressWorkers[addressModel.address]
                             {
                                 HStack {
-                                    Text("\(workers.count) workers")
+                                    Text("\(workersData.0.count) workers")
                                         .typography(.body1)
                                     Spacer()
+                                    if let payoutsSum = workersData.1 {
+                                        Text(Formatter.formatToNumber(payoutsSum) + " KAS")
+                                            .typography(.body1, color: .solidSuccess)
+                                    }
+                                }
+                                if let hashrateData = workersData.2 {
+                                    VStack {
+                                        HStack {
+                                            Text(Localization.katPoolHashrateTitle + " TH/s")
+                                                .typography(.headline3, color: .textSecondary)
+                                            Spacer()
+                                        }
+                                        LineChartDS(
+                                            chartData: .constant(hashrateData),
+                                            showVerticalLabels: true,
+                                            decimal: 1
+                                        )
+                                        .frame(height: 160)
+                                    }
                                 }
                             }
                         }
@@ -155,7 +173,7 @@ struct KatPoolView: View {
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
-            .frame(height: 160)
+            .frame(height: 370)
         }
     }
 
