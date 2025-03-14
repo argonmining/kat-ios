@@ -9,14 +9,16 @@ final class KatPoolViewModel {
     var minersChartData: [DonutChartDS.ChartData]? = nil
     var minersCount: Double? = nil
     var hashrateChartData: [LineChartDS.ChartData]? = nil
-    var payoutChartData: [LineChartDS.ChartData]? = nil
+    var kasPayoutChartData: [LineChartDS.ChartData]? = nil
+    var nachoPayoutChartData: [LineChartDS.ChartData]? = nil
     var latestPayouts: [PoolPayout]? = nil
     var isLoading: Bool = false
     var hashrateTimeInterval: Int = 7
     var payoutsTimeInterval: Int = 7
     // Addresses
     var addressModels: [AddressModel] = []
-    var addressWorkers: [String: ([WorkerHashRateDTO], Double?, [LineChartDS.ChartData]?)] = [:]
+    // Updated to store workers, kasPayoutsSum, nachoPayoutsSum, and hashrateData
+    var addressWorkers: [String: ([WorkerHashRateDTO], Double?, Double?, [LineChartDS.ChartData]?)] = [:]
     var addressesLoading: Bool = false
     var showAddresses: Bool = false
     var addressWorkersViewPresented: Bool = false
@@ -83,23 +85,25 @@ final class KatPoolViewModel {
     }
 
     func fetchAddressData(_ addresses: [String]) async {
-        await withTaskGroup(of: (String, [WorkerHashRateDTO]?, Double?, [LineChartDS.ChartData]?).self) { group in
+        await withTaskGroup(of: (String, [WorkerHashRateDTO]?, Double?, Double?, [LineChartDS.ChartData]?).self) { group in
             for address in addresses {
                 group.addTask { [weak self] in
                     do {
                         let workers = try await self?.networkService.fetchWorkersHashRate(address: address)
-                        let payoutsSum = try await self?.networkService.fetchKatPoolAddressPayouts(address: address).reduce(0) { $0 + $1.amount }
+                        let payouts = try await self?.networkService.fetchKatPoolAddressPayouts(address: address)
+                        let kasPayoutsSum = payouts?.filter { $0.amountType == .kas }.reduce(0) { $0 + $1.amount }
+                        let nachoPayoutsSum = payouts?.filter { $0.amountType == .nacho }.reduce(0) { $0 + $1.amount }
                         let history = try await self?.networkService.fetchKatPoolAddressHistory(address: address, range: 7).compactMap({$0.toChartDataItem()})
-                        return (address, workers, payoutsSum, history)
+                        return (address, workers, kasPayoutsSum, nachoPayoutsSum, history)
                     } catch {
                         print("Failed to fetch workers for address \(address): \(error)")
-                        return (address, nil, nil, nil)
+                        return (address, nil, nil, nil, nil)
                     }
                 }
             }
-            var results: [String: ([WorkerHashRateDTO], Double?, [LineChartDS.ChartData]?)] = [:]
-            for await (address, workers, payoutsSum, history) in group {
-                var resultData: ([WorkerHashRateDTO], Double?, [LineChartDS.ChartData]?) = ([], payoutsSum, history)
+            var results: [String: ([WorkerHashRateDTO], Double?, Double?, [LineChartDS.ChartData]?)] = [:]
+            for await (address, workers, kasPayoutsSum, nachoPayoutsSum, history) in group {
+                var resultData: ([WorkerHashRateDTO], Double?, Double?, [LineChartDS.ChartData]?) = ([], kasPayoutsSum, nachoPayoutsSum, history)
                 if let workers = workers {
                     resultData.0 = workers
                     results[address] = resultData
@@ -129,10 +133,12 @@ final class KatPoolViewModel {
                 self.blocks24h = result.1.totalBlocks24h
                 (self.minersChartData, minersCount) = self.chartData(from: result.2)
                 self.hashrateChartData = result.3.compactMap({$0.toChartDataItem()})
-                self.payoutChartData = self.aggregatePayoutsByDay(
+                let (kasData, nachoData) = self.aggregatePayoutsByTypeAndDay(
                     payouts: result.4,
                     days: self.payoutsTimeInterval
                 )
+                self.kasPayoutChartData = kasData
+                self.nachoPayoutChartData = nachoData
                 self.latestPayouts = self.latestPayouts(payouts: result.4, count: 5)
             }
         } catch {
@@ -155,14 +161,17 @@ final class KatPoolViewModel {
     }
 
     func fetchPayoutData() async {
-        payoutChartData = nil
+        kasPayoutChartData = nil
+        nachoPayoutChartData = nil
         do {
             let response = try await networkService.fetchKatPoolPayouts()
             await MainActor.run {
-                self.payoutChartData = self.aggregatePayoutsByDay(
+                let (kasData, nachoData) = self.aggregatePayoutsByTypeAndDay(
                     payouts: response,
                     days: self.payoutsTimeInterval
                 )
+                self.kasPayoutChartData = kasData
+                self.nachoPayoutChartData = nachoData
             }
         } catch {
             // TODO: Add error handling
@@ -184,23 +193,38 @@ final class KatPoolViewModel {
         }), Double(totalValue))
     }
 
-    private func aggregatePayoutsByDay(payouts: [PoolPayout], days: Int) -> [LineChartDS.ChartData] {
+    private func aggregatePayoutsByTypeAndDay(payouts: [PoolPayout], days: Int) -> ([LineChartDS.ChartData], [LineChartDS.ChartData]) {
         let calendar = Calendar.current
 
-        let groupedPayouts = Dictionary(grouping: payouts) { payout in
+        // Filter and group KAS payouts
+        let kasPayouts = payouts.filter { $0.amountType == .kas }
+        let kasGroupedPayouts = Dictionary(grouping: kasPayouts) { payout in
             let date = Date(timeIntervalSince1970: payout.timestamp / 1000)
             return calendar.startOfDay(for: date).timeIntervalSince1970
         }
-
-        let aggregatedData = groupedPayouts.map { (timestamp, payouts) in
+        let kasAggregatedData = kasGroupedPayouts.map { (timestamp, payouts) in
             LineChartDS.ChartData(
                 id: UUID(),
                 timestamp: timestamp,
                 value: payouts.reduce(0) { $0 + $1.amount }
             )
-        }
+        }.sorted { $0.timestamp < $1.timestamp }.suffix(days)
 
-        return aggregatedData.sorted { $0.timestamp < $1.timestamp }.suffix(days)
+        // Filter and group NACHO payouts
+        let nachoPayouts = payouts.filter { $0.amountType == .nacho }
+        let nachoGroupedPayouts = Dictionary(grouping: nachoPayouts) { payout in
+            let date = Date(timeIntervalSince1970: payout.timestamp / 1000)
+            return calendar.startOfDay(for: date).timeIntervalSince1970
+        }
+        let nachoAggregatedData = nachoGroupedPayouts.map { (timestamp, payouts) in
+            LineChartDS.ChartData(
+                id: UUID(),
+                timestamp: timestamp,
+                value: payouts.reduce(0) { $0 + $1.amount }
+            )
+        }.sorted { $0.timestamp < $1.timestamp }.suffix(days)
+
+        return (Array(kasAggregatedData), Array(nachoAggregatedData))
     }
 
     private func latestPayouts(payouts: [PoolPayout], count: Int) -> [PoolPayout] {

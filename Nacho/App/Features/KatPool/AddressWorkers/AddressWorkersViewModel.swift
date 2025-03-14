@@ -8,6 +8,8 @@ class AddressWorkersViewModel {
 
     var hashrateChartData: [LineChartDS.ChartData]? = nil
     var payouts: [PoolAddressPayoutDTO]? = nil
+    var kasPayoutsSum: Double? = nil
+    var nachoPayoutsSum: Double? = nil
     var isLoading: Bool = false
     var hashrateTimeInterval: Int = 7
 
@@ -38,6 +40,8 @@ class AddressWorkersViewModel {
             await MainActor.run {
                 self.hashrateChartData = result.0.compactMap({$0.toChartDataItem()})
                 self.payouts = result.1.sorted { $0.timestamp > $1.timestamp }
+                self.kasPayoutsSum = self.payouts?.filter { $0.amountType == .kas }.reduce(0) { $0 + $1.amount }
+                self.nachoPayoutsSum = self.payouts?.filter { $0.amountType == .nacho }.reduce(0) { $0 + $1.amount }
                 isLoading = false
             }
         } catch {

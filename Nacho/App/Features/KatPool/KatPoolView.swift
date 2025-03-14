@@ -137,18 +137,31 @@ struct KatPoolView: View {
                                 style: .large,
                                 color: .accentColor.opacity(0.7)
                             )
-                            if let workersData = viewModel.addressWorkers[addressModel.address]
-                            {
+                            if let workersData = viewModel.addressWorkers[addressModel.address] {
                                 HStack {
                                     Text("\(workersData.0.count) workers")
                                         .typography(.body1)
                                     Spacer()
-                                    if let payoutsSum = workersData.1 {
-                                        Text(Formatter.formatToNumber(payoutsSum) + " KAS")
+                                }
+                                if let kasPayoutsSum = workersData.1 {
+                                    HStack {
+                                        Text("KAS Payouts")
+                                            .typography(.body1)
+                                        Spacer()
+                                        Text(Formatter.formatToNumber(kasPayoutsSum) + " KAS")
                                             .typography(.body1, color: .solidSuccess)
                                     }
                                 }
-                                if let hashrateData = workersData.2 {
+                                if let nachoPayoutsSum = workersData.2 {
+                                    HStack {
+                                        Text("NACHO Payouts")
+                                            .typography(.body1)
+                                        Spacer()
+                                        Text(Formatter.formatToNumber(nachoPayoutsSum) + " NACHO")
+                                            .typography(.body1, color: .solidSuccess)
+                                    }
+                                }
+                                if let hashrateData = workersData.3 {
                                     VStack {
                                         HStack {
                                             Text(Localization.katPoolHashrateTitle + " TH/s")
@@ -173,7 +186,7 @@ struct KatPoolView: View {
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
-            .frame(height: 370)
+            .frame(height: 420)
         }
     }
 
@@ -224,30 +237,50 @@ struct KatPoolView: View {
 
     private var payoutsWidget: some View {
         WidgetDS {
-            VStack {
-                HStack {
-                    Text(Localization.katPoolPayoutsTitle)
-                        .typography(.headline3, color: .textSecondary)
-                    Spacer()
-                    Picker("Time Period", selection: $viewModel.payoutsTimeInterval) {
-                        Text("7d").tag(7)
-                        Text("30d").tag(30)
-                        Text("3m").tag(90)
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .frame(width: 140)
-                    .onChange(of: viewModel.payoutsTimeInterval) { _, newValue in
-                        Task {
-                            await viewModel.fetchPayoutData()
+            VStack(spacing: Spacing.padding_2) {
+                // KAS Payouts Chart
+                VStack {
+                    HStack {
+                        Text(Localization.katPoolPayoutsTitle + " (KAS)")
+                            .typography(.headline3, color: .textSecondary)
+                        Spacer()
+                        Picker("Time Period", selection: $viewModel.payoutsTimeInterval) {
+                            Text("7d").tag(7)
+                            Text("30d").tag(30)
+                            Text("3m").tag(90)
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .frame(width: 140)
+                        .onChange(of: viewModel.payoutsTimeInterval) { _, newValue in
+                            Task {
+                                await viewModel.fetchPayoutData()
+                            }
                         }
                     }
+                    LineChartDS(
+                        chartData: $viewModel.kasPayoutChartData,
+                        showVerticalLabels: true,
+                        decimal: 0
+                    )
+                    .frame(height: 200)
                 }
-                LineChartDS(
-                    chartData: $viewModel.payoutChartData,
-                    showVerticalLabels: true,
-                    decimal: 0
-                )
-                .frame(height: 200)
+
+                // NACHO Payouts Chart
+                VStack {
+                    HStack {
+                        Text(Localization.katPoolPayoutsTitle + " (NACHO)")
+                            .typography(.headline3, color: .textSecondary)
+                        Spacer()
+                    }
+                    LineChartDS(
+                        chartData: $viewModel.nachoPayoutChartData,
+                        showVerticalLabels: true,
+                        decimal: 0
+                    )
+                    .frame(height: 200)
+                }
+
+                // Recent Payouts
                 if let latestPayouts = viewModel.latestPayouts {
                     HStack {
                         Text(Localization.katPoolRecentPayoutsTitle)
@@ -274,7 +307,7 @@ struct KatPoolView: View {
                                             .typography(.caption)
                                     }
                                     Spacer()
-                                    Text(Formatter.formatToNumber(payout.amount) + " KAS")
+                                    Text("\(Formatter.formatToNumber(payout.amount)) \(payout.amountType.rawValue.uppercased())")
                                         .typography(.body1, color: .solidSuccess)
                                 }
                                 Divider()

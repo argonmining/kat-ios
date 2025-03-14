@@ -249,30 +249,35 @@ final class MockNetworkService: NetworkServiceProvidable {
             PoolPayout(
                 walletAddress: "kaspa:qqmvwmdq68a6tcv4taefqv7puavlnx0quakjfs5wumspa2cxqsvsw8gefe823",
                 amount: 5.79912864,
+                amountType: .kas,
                 timestamp: 1738065600975,
                 transactionHash: "eb7373197c9cc3f94b78d8d08b9d444ccad5c8844ae332a3d061d0802f73b7bc"
             ),
             PoolPayout(
                 walletAddress: "kaspa:qqt26gdaa0vp6ne8jlkxsm5yjnhywq3cc6yepq8zvnjytnh6k7cx5kdwgmqgq",
                 amount: 29.41335274,
+                amountType: .kas,
                 timestamp: 1738065600975,
                 transactionHash: "eb7373197c9cc3f94b78d8d08b9d444ccad5c8844ae332a3d061d0802f73b7bc"
             ),
             PoolPayout(
                 walletAddress: "kaspa:qypnw3h84jzkjmdxg5qa07kxznyrex4nnk2pakvhgkdn6htl3qa57ssvmjn409p",
                 amount: 6.25437828,
+                amountType: .kas,
                 timestamp: 1738065600975,
                 transactionHash: "eb7373197c9cc3f94b78d8d08b9d444ccad5c8844ae332a3d061d0802f73b7bc"
             ),
             PoolPayout(
                 walletAddress: "kaspa:qyp0kz62ja9wavdvyrlts0vyu54guv77x0dh4ej4m6k8s3wpxm6dmnqez9jy6lg",
                 amount: 41.87942143,
+                amountType: .kas,
                 timestamp: 1738065600975,
                 transactionHash: "eb7373197c9cc3f94b78d8d08b9d444ccad5c8844ae332a3d061d0802f73b7bc"
             ),
             PoolPayout(
                 walletAddress: "kaspa:qyp2ag4suam7ft8un8d7096rlve40d4hlmq0f45elgrdrzqvzfj8mnslj4pyytx",
                 amount: 284.22512623,
+                amountType: .kas,
                 timestamp: 1738065600975,
                 transactionHash: "eb7373197c9cc3f94b78d8d08b9d444ccad5c8844ae332a3d061d0802f73b7bc"
             )
@@ -319,6 +324,7 @@ final class MockNetworkService: NetworkServiceProvidable {
                 id: 923,
                 walletAddress: "kaspa:qpddrclq2hwkacgxurz9ms4xrqjyte08megnh9qqqcudxu53kkp676y405gmn",
                 amount: 12.35131311,
+                amountType: .kas,
                 timestamp: 1739318410248,
                 transactionHash: "cea49a03cba9ba6f8df5cefcb5d245f0cdba789ca0f905aed5acef817aa378a3"
             ),
@@ -326,6 +332,7 @@ final class MockNetworkService: NetworkServiceProvidable {
                 id: 898,
                 walletAddress: "kaspa:qpddrclq2hwkacgxurz9ms4xrqjyte08megnh9qqqcudxu53kkp676y405gmn",
                 amount: 19.04364990,
+                amountType: .nacho,
                 timestamp: 1739275200482,
                 transactionHash: "1fab9a21755b4c3ed04dc59fa6b90dee1da8c61017ec4900c5ac132872adf40c"
             ),
@@ -333,6 +340,7 @@ final class MockNetworkService: NetworkServiceProvidable {
                 id: 875,
                 walletAddress: "kaspa:qpddrclq2hwkacgxurz9ms4xrqjyte08megnh9qqqcudxu53kkp676y405gmn",
                 amount: 18.12792710,
+                amountType: .kas,
                 timestamp: 1739232000145,
                 transactionHash: "9eaf3df8441880052b8b58100bba69e5c91d2cfa9ef3564e9d4d4921c831d3cc"
             ),
@@ -340,6 +348,7 @@ final class MockNetworkService: NetworkServiceProvidable {
                 id: 857,
                 walletAddress: "kaspa:qpddrclq2hwkacgxurz9ms4xrqjyte08megnh9qqqcudxu53kkp676y405gmn",
                 amount: 15.24040568,
+                amountType: .nacho,
                 timestamp: 1739188805510,
                 transactionHash: "02ef2cfc641a5c551b82e14ac9d3f17dfa9d41c14926503624931f0906146659"
             ),
@@ -347,6 +356,7 @@ final class MockNetworkService: NetworkServiceProvidable {
                 id: 831,
                 walletAddress: "kaspa:qpddrclq2hwkacgxurz9ms4xrqjyte08megnh9qqqcudxu53kkp676y405gmn",
                 amount: 25.29578983,
+                amountType: .kas,
                 timestamp: 1739145606263,
                 transactionHash: "01cfe6cfa57012ff8af8dc3b5e12031bf76cfd7ca6cad797ea2ec69c2649a851"
             ),
@@ -354,6 +364,7 @@ final class MockNetworkService: NetworkServiceProvidable {
                 id: 810,
                 walletAddress: "kaspa:qpddrclq2hwkacgxurz9ms4xrqjyte08megnh9qqqcudxu53kkp676y405gmn",
                 amount: 27.75684444,
+                amountType: .nacho,
                 timestamp: 1739102400720,
                 transactionHash: "..."
             )

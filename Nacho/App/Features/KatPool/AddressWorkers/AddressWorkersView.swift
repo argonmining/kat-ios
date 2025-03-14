@@ -108,19 +108,33 @@ struct AddressWorkersView: View {
         if let payouts = viewModel.payouts {
             WidgetDS {
                 LazyVStack(spacing: Spacing.padding_2) {
-                    HStack {
-                        Text(Localization.katPoolPayoutsTitle)
-                            .typography(.headline3, color: .textSecondary)
-                        Spacer()
-                        Text(Formatter.formatToNumber(payouts.reduce(0, { $0 + $1.amount })) + " KAS")
-                            .typography(.subtitle, color: .solidSuccess)
+                    // KAS Payouts Sum
+                    if let kasPayoutsSum = viewModel.kasPayoutsSum, kasPayoutsSum > 0 {
+                        HStack {
+                            Text(Localization.katPoolPayoutsTitle + " (KAS)")
+                                .typography(.headline3, color: .textSecondary)
+                            Spacer()
+                            Text(Formatter.formatToNumber(kasPayoutsSum) + " KAS")
+                                .typography(.subtitle, color: .solidSuccess)
+                        }
                     }
+                    // NACHO Payouts Sum
+                    if let nachoPayoutsSum = viewModel.nachoPayoutsSum, nachoPayoutsSum > 0 {
+                        HStack {
+                            Text(Localization.katPoolPayoutsTitle + " (NACHO)")
+                                .typography(.headline3, color: .textSecondary)
+                            Spacer()
+                            Text(Formatter.formatToNumber(nachoPayoutsSum) + " NACHO")
+                                .typography(.subtitle, color: .solidSuccess)
+                        }
+                    }
+                    // Individual Payouts
                     ForEach(payouts, id: \.self) { payout in
                         HStack {
                             Text(Formatter.formatDateAndTime(payout.timestamp / 1000))
                                 .typography(.caption)
                             Spacer()
-                            Text(Formatter.formatToNumber(payout.amount) + " KAS")
+                            Text("\(Formatter.formatToNumber(payout.amount)) \(payout.amountType.rawValue.uppercased())")
                                 .typography(.body1, color: .solidSuccess)
                         }
                         Divider()
